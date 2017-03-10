@@ -1,0 +1,174 @@
+/*
+Theme Name: Child Theme for html5-blank
+Template: html5blank-stable
+
+	Theme URI: http://html5blank.com
+	Description: HTML5 Blank WordPress Theme
+	Version: 1.4.3
+	Author: Todd Motto (@toddmotto)
+	Author URI: http://toddmotto.com
+	Tags: Blank, HTML5, CSS3
+
+	License: MIT
+	License URI: http://opensource.org/licenses/mit-license.php
+
+*/
+
+@import url("../html5blank-stable/style.css");
+
+/* Start your custom CSS bellow this comment
+============================================ */
+
+
+/*custom font*/
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+.select2-container {
+			text-align: left;
+
+}
+
+/*basic reset*/
+* {margin: 0; padding: 0;}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.wrapper {
+    min-height: 100%; 
+}
+
+html {
+	background: #4f585b;
+}
+
+body {
+	font-family: montserrat, arial, verdana!important;
+	font-size:12px!important;
+}
+
+/*form styles*/
+.container {
+	width: 300px;
+	margin: 0 auto;
+	text-align: center;
+	position: relative;
+	margin-top: 10px;
+	margin-bottom: 20px;
+  	background: #fcfbee; /* For browsers that do not support gradients */
+    background: -webkit-linear-gradient(#fcfbee, white); /* For Safari 5.1 to 6.0 */
+    background: -o-linear-gradient(#fcfbee, white); /* For Opera 11.1 to 12.0 */
+    background: -moz-linear-gradient(#fcfbee, white); /* For Firefox 3.6 to 15 */
+    background: linear-gradient(#fcfbee, white); /* Standard syntax */
+	border: 0 none;
+	border-top-left-radius: 20px;
+	border-top-right-radius: 20px;
+	border-bottom-left-radius: 3px;
+	border-bottom-right-radius: 3px;
+	box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+	padding-bottom: 25px;
+	box-sizing: border-box;
+	position: relative;
+}
+
+
+/*inputs*/
+.container input, .container select, .container textarea {
+	padding: 3px;
+	padding-left:5px;
+	border: 1px solid #989898;
+	border-radius: 2px;
+	margin-bottom: 10px;
+
+	box-sizing: border-box;
+	font-family: montserrat;
+	color: #2C3E50;
+	font-size: 13px;
+}
+
+/*buttons*/
+.container .action-button {
+	width: 100px;
+	background: #2e83ae;
+	color: white;
+    border: 0 none;
+    border-radius: 0px;
+	cursor: pointer;
+	padding: 5px 5px;
+	margin-top:10px;
+	margin-bottom:0px;
+}
+
+.container .action-button:hover, .container .action-button:focus {
+	box-shadow: 0 0 0 2px white, 0 0 0 3px #2e83ae;
+}
+
+.container header {
+	background: #6a6a6a;
+    
+	color: #ffffff;
+	height: 50px;
+	margin-bottom:30px;
+	padding-top:19px;
+	border-top-left-radius: 3px;
+	border-top-right-radius: 3px;
+}
+
+.inputdefault {
+	width: 125px;
+}
+
+.selectcoin {
+	width: 190px;
+}
+
+.inputemail {
+	width: 190px;
+}
+
+.selectcurrency {
+	width: 61px;
+}
+
+/*headings*/
+.fs-title {
+	font-size: 12px;
+	text-transform: uppercase;
+	color: #313131;
+	margin-bottom: 20px;
+  margin-left: -5px;
+  margin-right: -5px;
+  font-weight: normal!important;
+}
+
+.fs-labels {
+	font-weight: normal;
+	font-size: 13px;
+	color: #313131;
+	margin-bottom: 0px;
+  margin-top:5px;
+  
+}
+.txtlogo {
+	text-align:center;
+	font-size: 13px;
+	color: #ffffff;
+	margin:0 auto;
+	margin-bottom: 19px;
+    margin-top:0px;
+}
+
+#logo {
+margin:0 auto;
+text-align:center;
+margin-top:30px;
+margin-bottom:7px;
+}
+
+@media screen and (max-width: 680px) {
+#logo {
+margin-top:5px;
+}
+}
