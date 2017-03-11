@@ -1,4 +1,6 @@
-# [COINWINK](https://coinwink.com)
+[https://coinwink.com](https://coinwink.com)
+
+# Coinwink
 
 COINWINK is an automated web application for sending crypto-currency (Bitcoin, Ethereum...) price alerts via e-mail.
 
