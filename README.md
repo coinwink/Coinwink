@@ -16,7 +16,7 @@ The app doesn't use accounts. Anyone can create alert instantly. User will recei
 
 ## Quick installation instructions
 
-First you need to install Wordpress and download [HTML5 Blank Wordpress Theme](http://html5blank.com/).
+First you need to install Wordpress and download [HTML5 Blank Theme](http://html5blank.com/).
 
 Then upload coinwink-html5-child-theme to your themes folder and activate it. Create new empty home page and set it to use Coinwink Template.
 
