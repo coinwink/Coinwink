@@ -8,7 +8,7 @@ The application gets price and coin data from [coinmarketcap.com](http://coinmar
 
 Application stack: JavaScript, JQuery, PHP, MySQL, minimal Wordpress backend and HTML5 Blank Theme.
 
-This repository is for the source code for the application. See installation instructions below.
+This repository provides the source code for the application. See installation instructions below.
 
 
 ## How it works?
