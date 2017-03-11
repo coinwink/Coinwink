@@ -29,4 +29,5 @@ backend.php is checking the current price agains existing alerts and sending e-m
 coin_list.php gets coin dada from coinmarketcap.com API, converts this data into a html string and puts it into a database for the "Coin to watch:" input field on the front end. Because coin list is not updating frequently, the cronjob for this file is set to */12 hours.
 
 For web spam protection the [Captcha](https://wordpress.org/plugins/captcha/) plugin is being used. In Wordpress Settings->Coinwink click Enable.
+
 For filterable select the [Select2](https://select2.github.io/) is being used.
