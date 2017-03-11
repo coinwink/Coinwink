@@ -2,7 +2,7 @@
 
 # Coinwink
 
-Coinwink is an automated web application for creating and sending crypto-currency (Bitcoin, Ethereum...) price alerts via e-mail. It can run on a standard shared web hosting server.
+Coinwink is an automated web application for creating and sending crypto-currency (Bitcoin, Ethereum...) price alerts via e-mail. It can run on a standard shared hosting server.
 
 The application gets price and coin data from [coinmarketcap.com](http://coinmarketcap.com/) API.
 
