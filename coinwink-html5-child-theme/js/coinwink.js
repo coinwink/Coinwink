@@ -248,7 +248,7 @@ jQuery('#symbol').change(function(){
 console.log(urlSymbol); */
 var link = document.location.href.split('/');
 // console.log(link[4]);
-var urlSymbol = link[4].replace(/[^a-z0-9]/gi,'');
+var urlSymbol = link[3].replace(/[^a-z0-9]/gi,'');
 var urlSymbolUp = urlSymbol.toUpperCase();
 if (urlSymbol) {
 	jQuery("#symbol").val(urlSymbolUp).trigger("change");

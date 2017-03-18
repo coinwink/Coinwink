@@ -110,9 +110,9 @@
 	<h2 class="fs-title" style="color:white;">Tips &amp; tricks</h2>
 	</header>
 	<div style="margin-bottom:0px;padding-left:25px;padding-right:25px;">
-	You can use (and bookmark) a custom url address to pre-select your coin, e.g. https://coinwink.com/eth (put coin symbol after the slash).
+	You can use (and bookmark) a custom url address to pre-select your coin, e.g. https://coinwink.com/eth (put a coin symbol after the slash).
 	<br><br>
-	You can place a Coinwink icon on your mobile device desktop. To do this, open Coinwink on your mobile, click settings and then Add to Home Screen.
+	You can place Coinwink icon on your mobile device desktop. To do this, open coinwink.com on your mobile, click settings and then Add to Home Screen.
 	<br><br>
 	To create an alert you don't need an account or to click on a confirmation link. Your alert will be created instantly. You will receive an unique ID to your e-mail. You can use this ID to manage your alerts.
 	<br><br>

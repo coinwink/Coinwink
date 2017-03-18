@@ -9,7 +9,7 @@
 	<meta name="description" content="<?php bloginfo('description'); ?>">
 	<link href="//www.google-analytics.com" rel="dns-prefetch">
 
-	<title>Crypto currency price alert, alarm, reminder (Bitcoin, Ethereum...)</title>
+	<title>Coinwink: Crypto-currency (Bitcoin, Ethereum...) price alerts, alarms, reminders</title>
 
 	<!-- Favicon -->
 	<link rel="apple-touch-icon" sizes="120x120" href="apple-touch-icon.png">
