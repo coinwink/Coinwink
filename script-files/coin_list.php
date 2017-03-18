@@ -21,7 +21,7 @@ curl_close($ch);
 $outputdecoded = json_decode($output, true);
 
 foreach ($outputdecoded as $coinlink) {  
-      $coin_list .= "<option value=\"".$coinlink['name']."\">".$coinlink['name']." (". $coinlink['symbol'] .")</option>"; 
+      $coin_list .= "<option value=\"".$coinlink['symbol']."\">".$coinlink['name']." (". $coinlink['symbol'] .")</option>"; 
 }
 
 

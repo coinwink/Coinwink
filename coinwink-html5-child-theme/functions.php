@@ -213,6 +213,24 @@ add_action('wp_ajax_nopriv_delete_alert', 'delete_alert');
 
 
 //
+// Deregister dashicons from Wordpress for better loading time
+//
+add_action( 'wp_print_styles',     'my_deregister_styles', 100 );
+function my_deregister_styles()    { 
+   if (current_user_can( 'update_core' )) {
+     return;
+   }
+   wp_deregister_style( 'dashicons' );
+}
+
+//
+// Remove emojicons from Wordpress for better loading time 
+//
+remove_action( 'wp_head', 'print_emoji_detection_script', 7 );
+remove_action( 'wp_print_styles', 'print_emoji_styles' ); 
+
+
+//
 // Required by Theme
 //
 function my_theme_enqueue_styles() {

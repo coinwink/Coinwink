@@ -4,31 +4,23 @@
 include_once "coinwink_sql.php";
 
 
-
 // Select all data from alerts database
 $sql = "SELECT * FROM coinwink";
 $resultdb = $conn->query($sql);
 $masyvas = (mysqli_fetch_assoc($resultdb));
 
 
-
 // Get data from coinmarketcap.com
-
 // create curl resource 
 $ch = curl_init(); 
-
 // set url 
-curl_setopt($ch, CURLOPT_URL, "https://api.coinmarketcap.com/v1/ticker/"); 
-
+curl_setopt($ch, CURLOPT_URL, "https://api.coinmarketcap.com/v1/ticker/?limit=100"); 
 //return the transfer as a string 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1); 
-
 // $output contains the output string 
 $output = curl_exec($ch); 
-
 // close curl resource to free up system resources 
 curl_close($ch);
-
 
 
 // Update market data in the database for the front end
@@ -38,24 +30,17 @@ $sqljson = "UPDATE coinwink_json SET json = '$output2'";
 $conn->query($sqljson);
 
 
-
 // Checking alerts and sending e-mails
 foreach ($resultdb as $row) {
-
-foreach ($outputdecoded as $jsoncoin)
-{
-
-if ($jsoncoin['name'] == $row['coin']) {
-
-
-if ($row['below_currency'] == 'BTC') {
-
+    foreach ($outputdecoded as $jsoncoin) {
+        if ($jsoncoin['name'] == $row['coin']) {
+            if ($row['below_currency'] == 'BTC') {
                 if ($jsoncoin['price_btc'] < $row['below'] && !$row['below_sent'] && is_numeric($row['below'])){ 
                 
                 echo($row['ID'] . $row['coin'] . "BTC BELOW email sent");
                 
                 $to  = $row['email'];
-                $subject = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' BTC';
+                $subject = 'Alert: '. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' BTC';
                 
                 $message = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' BTC.
                 
@@ -84,7 +69,7 @@ if ($row['below_currency'] == 'USD') {
                 echo($row['ID'] . $row['coin'] . "USD BELOW email sent");
                 
                 $to  = $row['email'];
-                $subject = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' USD';
+                $subject = 'Alert: '. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' USD';
                 
                 $message = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is below '. $row['below'] .' USD.
                 
@@ -114,7 +99,7 @@ if ($row['above_currency'] == 'USD') {
                 echo($row['ID'] . $row['coin'] . "USD ABOVE email sent");  
                 
                 $to  = $row['email'];
-                $subject = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' USD';
+                $subject = 'Alert: '. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' USD';
                 
                 $message = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' USD.
                 
@@ -146,7 +131,7 @@ if ($row['above_currency'] == 'BTC') {
                 ///
                 
                 $to  = $row['email'];
-                $subject = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' BTC';
+                $subject = 'Alert: '. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' BTC';
                 
 $message = ''. ucfirst($row['coin']) .' ('. ucfirst($row['symbol']) .') is above '. $row['above'] .' BTC.
                 
