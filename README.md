@@ -33,9 +33,9 @@ PHP files starting with "backend_" are scripts for checking prices and sending a
 
 backend_email.php in particular also gets coin data as JSON and puts it into the local MySQL database - this helps to avoid too many direct calls to the API. During the Coinwink page load, the page takes this JSON from MySQL and presents it as price information for each coin, and also creates option values for the coins drop-down list.
 
-The "backend_" php scripts need to run each few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
+The "backend_" php scripts need to run every few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
 
-To be able to see the favicon, extract all files from the favicon.zip file to the same home directory and then edit img paths in Coinwink theme's header.php file.
+To be able to see the favicon, extract all files from the favicon.zip file to the same home directory and then edit favicon paths in Coinwink theme's header.php file.
 
 For web spam protection Coinwink is using Captcha by BestWebSoft plugin. Do not use any version of this plugin that is higher than 4.3.0. Captcha protection is enabled only when creating alerts without the Coinwink account.
 
