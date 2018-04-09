@@ -9,15 +9,15 @@ The application gets price and coin data from [coinmarketcap.com](http://coinmar
 Application stack: JavaScript, JQuery, PHP, MySQL, minimal Wordpress back-end.
 
 This repository provides the source code for the application. See installation instructions below.
-
-
-## Quick installation instructions
+<br>
+<br>
+## Installation instructions
 
 First do a clean install of Wordpress.
 
 Then upload all files and folders from this repository to your Wordpress installation directory. This will place custom Coinwink theme and Coinwink login user accounts plugin in their proper locations.
 
-To be able to see favicon, extract all files from the favicon.zip file to the same home directory and then edit img paths in header.php
+To be able to see favicon, extract all files from the favicon.zip file to the same home directory and then edit img paths in your theme's header.php file.
 
 Edit database login details in coinwink_auth_sql.php file and then open coinwink_create_db.php file in your browser (run it once). This will create database tables.
 
