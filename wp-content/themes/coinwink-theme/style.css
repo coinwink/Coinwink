@@ -1,0 +1,409 @@
+/*
+	Theme Name: Coinwink
+	Theme URI: https://github.com/dziungles/Coinwink
+*/
+
+/*custom font*/
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+/*basic reset*/
+* {margin: 0; padding: 0;}
+
+/* Change the white to any color ;) */
+input:-webkit-autofill {
+    -webkit-box-shadow: 0 0 0 30px white inset;
+}
+
+.select2-container {
+  text-align: left;
+}
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+a {
+	color:#ffffff!important;
+}
+
+a.blacklink {
+  color: black!important;
+  text-decoration: underline;
+}
+
+a.portfoliocoin {
+  color: black!important;
+  text-decoration: none;
+}
+
+a.pricenow {
+  color: black!important;
+  text-decoration: none;
+}
+
+a.whitelink {
+  color: #ffffff!important;
+  text-decoration: underline;
+}
+
+.wrapper {
+  min-height: 100%; 
+}
+
+html {
+  background: #4f585b;
+}
+
+body {
+  font-family: montserrat, arial, verdana!important;
+  font-size:12px!important;
+}
+
+#logo {
+  margin:0 auto;
+  text-align:center;
+  margin-top:25px;
+  margin-bottom:7px;
+}
+
+#txtlogo {
+  text-align:center;
+  font-size: 13px;
+  color: #ffffff;
+  margin:0 auto;
+  margin-bottom: 19px;
+  margin-top:0px;
+}
+
+.italic {
+  font-style: italic;
+}
+
+#txtlogo > a {
+  text-decoration: none!important;
+}
+
+@media screen and (max-width: 680px) {
+  #logo { margin-top:5px; }
+}
+
+#alerttitle {
+  padding: 5px;
+  border: 1px solid #4f585b;
+  display: inline-block;
+  width: 105px;
+  font-weight: bold;
+  margin: 0 auto;
+}
+
+.content {
+  width: 250px;
+  margin: 0 auto;
+  margin-bottom: 7px;
+}
+
+/*portfolio styles*/
+
+.portfoliocoinamount {
+  width: 60px;
+  height: 20px;
+}
+
+.portfoliocoinid {
+  padding-bottom:4px;
+}
+
+.portfoliocointotal {
+  width: 60px;
+  margin-left: 5px;
+}
+
+.portfoliotable {
+  width: 100%;
+  height: 100%;
+  display: block;
+  table-layout: fixed;
+  border-collapse: collapse;
+  position: relative;
+  margin-bottom: 50px;
+}
+  
+  th {
+    border-bottom: 1px solid black;
+  }
+  
+  tfoot td {
+    border-top: 1px solid black;
+  }
+  
+  th,
+  td {
+    text-align: left;
+    padding-left: 10px;
+    vertical-align: middle;
+  }
+  
+  thead,
+  tfoot,
+  tbody > tr {
+    display: table;
+    width: 100%;
+    table-layout: fixed;
+  }
+  
+  thead {
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+  
+  tbody {
+    display: block;
+    transform: translate(0, 34px);
+    height: 100%;
+    overflow-y: auto;
+  }
+  
+  tfoot {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    transform: translate(0, 34px);
+  }
+
+.containerloader {
+  background-image:url('img/ajax_loader_dark.gif');
+  background-repeat:no-repeat;
+  background-position:center top;
+  min-height:35px;
+}
+
+/*form styles*/
+.container {
+  width: 300px;
+  margin: 0 auto;
+  text-align: center;
+  position: relative;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  background: #fcfbee; /* For browsers that do not support gradients */
+  background: -webkit-linear-gradient(#fcfbee, white); /* For Safari 5.1 to 6.0 */
+  background: -o-linear-gradient(#fcfbee, white); /* For Opera 11.1 to 12.0 */
+  background: -moz-linear-gradient(#fcfbee, white); /* For Firefox 3.6 to 15 */
+  background: linear-gradient(#fcfbee, white); /* Standard syntax */
+  border: 0 none;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  box-shadow: 0 0 15px 1px rgba(0, 0, 0, 0.4);
+  padding-bottom: 25px;
+  box-sizing: border-box;
+  position: relative;
+}
+
+/*inputs*/
+.container input, .container select, .container textarea {
+  padding: 3px;
+  padding-left:5px;
+  border: 1px solid #989898;
+  border-radius: 2px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  font-family: montserrat;
+  color: #2C3E50;
+  font-size: 13px;
+}
+
+input[type=submit] {
+  cursor: pointer;
+}
+
+/*buttons*/
+.container .action-button {
+  width: 100px;
+  background: #2e83ae;
+  color: white;
+  border: 0 none;
+  border-radius: 0px;
+  cursor: pointer;
+  padding: 5px 5px;
+  margin-top:10px;
+  margin-bottom:0px;
+}
+
+.container .action-button:hover, .container .action-button:focus {
+  box-shadow: 0 0 0 2px white, 0 0 0 3px #2e83ae;
+}
+
+.container header {
+  background: #6a6a6a;
+  color: #ffffff;
+  height: 50px;
+  margin-bottom:30px;
+  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
+}
+
+.inputdefault {
+  width: 125px;
+}
+
+.selectcoin {
+  width: 190px;
+}
+
+.inputemail {
+  width: 190px;
+}
+
+.selectcurrency {
+  width: 61px;
+}
+
+.percentchange {
+  width: 119px;
+}
+
+.percentinput {
+  width: 48px;
+}
+
+.circle {
+  border:2px solid white;    
+  height:30px;
+  border-radius:50%;
+  -moz-border-radius:50%;
+  -webkit-border-radius:50%;
+  width:30px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 30px;
+  margin-top:13px;
+  margin-bottom:10px;
+  font-weight:bold;
+  font-size:14px;
+}
+
+.circlegrey {
+  border:1px solid #939393;    
+  height:30px;
+  border-radius:50%;
+  -moz-border-radius:50%;
+  -webkit-border-radius:50%;
+  width:30px;
+  text-align: center;
+  vertical-align: middle;
+  line-height: 30px;
+  margin-top:15px;
+  margin-bottom:10px;
+  font-weight:normal;
+  font-size:14px;
+}
+
+/*headings*/
+.fs-title {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #313131;
+  margin-bottom: 20px;
+  padding-top: 19px;
+  margin-left: -5px;
+  margin-right: -5px;
+  font-weight: normal!important;
+}
+
+.fs-labels {
+  font-weight: normal;
+  font-size: 13px;
+  color: #313131;
+  margin-bottom: 1px;
+  margin-top:5px;
+}
+
+/*switch*/
+.switch {
+  position: relative;
+  margin: 20px auto;
+  height: 26px;
+  width: 120px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 3px;
+  -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.switch-label {
+  position: relative;
+  z-index: 2;
+  float: left;
+  width: 58px;
+  line-height: 26px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  text-align: center;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.switch-label:active {
+  font-weight: bold;
+}
+
+.switch-label-off {
+  padding-left: 2px;
+}
+
+.switch-label-on {
+  padding-right: 2px;
+}
+
+/*
+  Note: using adjacent or general sibling selectors 
+  combined with pseudo classes doesn't work in Safari 
+  5.0 and Chrome 12.
+  See this article for more info and a potential fix: 
+  http://css-tricks.com/webkit-sibling-bug/
+*/
+
+.switch-input {
+  display: none;
+}
+
+.switch-input:checked + .switch-label {
+  font-weight: bold;
+  color: rgba(0, 0, 0, 0.65);
+  text-shadow: 0 1px rgba(255, 255, 255, 0.25);
+  -webkit-transition: 0.15s ease-out;
+  -moz-transition: 0.15s ease-out;
+  -o-transition: 0.15s ease-out;
+  transition: 0.15s ease-out;
+}
+
+.switch-input:checked + .switch-label-on ~ .switch-selection {
+  /* Note: left: 50% doesn't transition in WebKit */
+  left: 60px;
+}
+
+.switch-selection {
+  display: block;
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 2px;
+  width: 58px;
+  height: 22px;
+  border-radius: 3px;
+  background: #c4bb61;
+  background-image: -webkit-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: -moz-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: -o-linear-gradient(top, #e0dd94, #c4bb61);
+  background-image: linear-gradient(to bottom, #e0dd94, #c4bb61);
+  -webkit-box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  box-shadow: inset 0 1px rgba(255, 255, 255, 0.5), 0 0 2px rgba(0, 0, 0, 0.2);
+  -webkit-transition: left 0.15s ease-out;
+  -moz-transition: left 0.15s ease-out;
+  -o-transition: left 0.15s ease-out;
+  transition: left 0.15s ease-out;
+}

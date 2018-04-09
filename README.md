@@ -2,36 +2,43 @@
 
 # Coinwink
 
-Coinwink is an automated web application for creating and sending crypto-currency (Bitcoin, Ethereum...) price alerts via e-mail. It can run on a standard shared hosting web server.
+Coinwink is an automated web application for creating and receiving crypto-currency (Bitcoin, Ethereum...) price alerts via e-mail and SMS. It can run on a standard shared hosting web server.
 
 The application gets price and coin data from [coinmarketcap.com](http://coinmarketcap.com/) API.
 
-Application stack: JavaScript, JQuery, PHP, MySQL, minimal Wordpress backend and HTML5 Blank Theme.
+Application stack: JavaScript, JQuery, PHP, MySQL, minimal Wordpress back-end.
 
 This repository provides the source code for the application. See installation instructions below.
 
 
-## How it works?
-
-The app doesn't use accounts. Anyone can create alert instantly. User will receive an unique ID that can be used to delete alerts. With the last deleted alert also the ID and e-mail address are deleted from the database. E-mails and IDs are deleted also when there are no active alerts left.
-
-
 ## Quick installation instructions
 
-First you need to install Wordpress and download [HTML5 Blank Theme](http://html5blank.com/).
+First do a clean install of Wordpress.
 
-Then upload coinwink-html5-child-theme to your themes folder and activate it. Create a new empty home page and set it to use Coinwink Template.
+Then upload all files and folders from this repository to your Wordpress installation directory. This will place custom Coinwink theme and Coinwink login user accounts plugin in their proper locations.
 
-Upload create_db.php (see script-files folder) on your server, edit database login details and then open this file in your browser (run it once). This will create database tables.
+To be able to see favicon, extract all files from the favicon.zip file to the same home directory and then edit img paths in header.php
 
-Also upload backend.php and coin_list.php on your server. Edit your database login details.
+Edit database login details in coinwink_auth_sql.php file and then open coinwink_create_db.php file in your browser (run it once). This will create database tables.
 
-backend.php is checking the current price agains existing alerts and sending e-mails when it is time to alert. To protect users' privacy, it automatically deletes from the database e-mail addresses that no longer have active alerts. No private data is kept in Coinwink database. It also gets coin data as JSON and submits it into the MySQL database. During the coinwink.com page load, the page takes this JSON from MySQL and presents it as price information for each coin - this helps to avoid too many direct calls to the API. The backend.php script needs to run each few minutes. On the production version the cron for this script is set to */3 minutes. Keep in mind that coinmarketcap.com API updates each 5 minutes.
+To be able to send emails, edit your mail settings in coinwink_auth_email.php and coinwink_auth_email_functions.php files.
 
-coin_list.php gets coin dada from coinmarketcap.com API, converts this data into a html string and puts it into a database for the "Coin to watch:" input field on the front end. Because coin list is not updating frequently, the cronjob for this file is set to */12 hours.
+In Wordpress admin, first activate the Coinwink theme. Then create a new empty home page and set it to use "Coinwink - Home" template. Set this newly created page as the default homepage in Settings->Reading. 
 
-Files from the favicon folder upload to your root directory.
+To be able to use Coinwink with accounts, in your Wordpress admin create two additional pages with permalinks /account/ and /changepass/ with "Coinwink - Account" and "Coinwink - Changepass" templates. In /account/ page add the following shortcode: "[custom-register-form]" (without quotes). In Wordpress Settings->General check "Anyone can register". Then activate Coinwink Login plugin. 
 
-For web spam protection the [Captcha](https://wordpress.org/plugins/captcha/) plugin is being used. In Wordpress Settings->Coinwink click Enable.
+Open backend_email.php in your browser to get initial data for the app. After that, you can open and start using your newly installed Coinwink app.
 
-For filterable select the [Select2](https://select2.github.io/) is being used.
+Note: If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the link[3] number in template-home.php on line 903. In this 'domain.com/coinwink' example, the number should be link[4]. Then you will be able to see the coin data in the drop-down list.
+
+PHP files starting with "backend_" are scripts for checking prices and sending alerts.
+
+backend_email.php in particular also gets coin data as JSON and puts it into the local MySQL database - this helps to avoid too many direct calls to the API. During the Coinwink page load, the page takes this JSON from MySQL and presents it as price information for each coin, and also creates option values for the coins drop-down list.
+
+The "backend_" php scripts need to run each few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
+
+For web spam protection Coinwink is using Captcha by BestWebSoft plugin. Do not use any version of this plugin that is higher than 4.3.0. Captcha protection is enabled only when creating alerts without the Coinwink account.
+
+For filterable drop-down select the [Select2](https://select2.github.io/) is being used.
+
+For downloading the new coin logos and for updating the existing ones, a separate script was created and is available at this [cryptocurrency-logos](https://github.com/dziungles/cryptocurrency-logos) repository.
