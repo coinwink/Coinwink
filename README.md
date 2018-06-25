@@ -30,6 +30,7 @@ To be able to use Coinwink with accounts, in your Wordpress admin create two add
 Open `backend_email.php` in your browser to get initial data for the app. After that, you can open and start using your newly installed Coinwink app.
 <br>
 <br>
+
 **Cron jobs**
 
 PHP files starting with `backend_` are scripts for checking prices and sending alerts.
@@ -39,6 +40,7 @@ PHP files starting with `backend_` are scripts for checking prices and sending a
 The `backend_` PHP scripts need to run every few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
 <br>
 <br>
+
 **Additional notes**
 
 If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the `link[3]` number in `template-home.php` on line 903. In this "domain.com/coinwink" example, the number should be `link[4]`. Then you will be able to see the coin data in the drop-down list.
