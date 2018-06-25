@@ -23,9 +23,9 @@ Edit database login details in `coinwink_auth_sql.php` file and then open `coinw
 
 To be able to send emails, edit your mail settings in `coinwink_auth_email.php` and `coinwink_auth_email_functions.php` files.
 
-In Wordpress admin, first activate the Coinwink theme. Then create a new empty home page and set it to use "Coinwink - Home" template. Set this newly created page as the default homepage in `Settings->Reading`. 
+In Wordpress admin, first activate the Coinwink theme. Then create a new empty home page and set it to use "Coinwink - Home" template. Set this newly created page as the default homepage in "Settings->Reading". 
 
-To be able to use Coinwink with accounts, in your Wordpress admin create two additional pages with permalinks `/account/` and `/changepass/` with "Coinwink - Account" and "Coinwink - Changepass" templates. In `/account/` page add the following shortcode: `[custom-register-form]`. In Wordpress `Settings->General` check "Anyone can register". Then activate "Coinwink Login" plugin. 
+To be able to use Coinwink with accounts, in your Wordpress admin create two additional pages with permalinks `/account/` and `/changepass/` with "Coinwink - Account" and "Coinwink - Changepass" templates. In `/account/` page add the following shortcode: `[custom-register-form]`. In Wordpress "Settings->General" check "Anyone can register". Then activate "Coinwink Login" plugin. 
 
 Open `backend_email.php` in your browser to get initial data for the app. After that, you can open and start using your newly installed Coinwink app.
 <br>
