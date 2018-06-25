@@ -13,6 +13,8 @@ This repository provides the source code for the application. See installation i
 <br>
 ## Installation instructions
 
+* Initial setup *
+
 First do a clean install of Wordpress.
 
 Then upload all files and folders from this repository to your Wordpress installation directory. This will place custom Coinwink theme and Coinwink login user accounts plugin in their proper locations.
@@ -27,13 +29,17 @@ To be able to use Coinwink with accounts, in your Wordpress admin create two add
 
 Open backend_email.php in your browser to get initial data for the app. After that, you can open and start using your newly installed Coinwink app.
 
-Note: If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the link[3] number in template-home.php on line 903. In this 'domain.com/coinwink' example, the number should be link[4]. Then you will be able to see the coin data in the drop-down list.
+* Cron jobs *
 
 PHP files starting with "backend_" are scripts for checking prices and sending alerts.
 
 backend_email.php in particular also gets coin data as JSON and puts it into the local MySQL database - this helps to avoid too many direct calls to the API. During the Coinwink page load, the page takes this JSON from MySQL and presents it as price information for each coin, and also creates option values for the coins drop-down list.
 
 The "backend_" php scripts need to run every few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
+
+* Extra notes *
+
+If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the link[3] number in template-home.php on line 903. In this 'domain.com/coinwink' example, the number should be link[4]. Then you will be able to see the coin data in the drop-down list.
 
 To be able to see the favicon, extract all files from the favicon.zip file to the same home directory and then edit favicon paths in Coinwink theme's header.php file.
 
