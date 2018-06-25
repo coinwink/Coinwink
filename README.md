@@ -28,7 +28,8 @@ In Wordpress admin, first activate the Coinwink theme. Then create a new empty h
 To be able to use Coinwink with accounts, in your Wordpress admin create two additional pages with permalinks /account/ and /changepass/ with "Coinwink - Account" and "Coinwink - Changepass" templates. In /account/ page add the following shortcode: "[custom-register-form]" (without quotes). In Wordpress Settings->General check "Anyone can register". Then activate Coinwink Login plugin. 
 
 Open backend_email.php in your browser to get initial data for the app. After that, you can open and start using your newly installed Coinwink app.
-
+<br>
+<br>
 **Cron jobs**
 
 PHP files starting with "backend_" are scripts for checking prices and sending alerts.
@@ -36,7 +37,8 @@ PHP files starting with "backend_" are scripts for checking prices and sending a
 backend_email.php in particular also gets coin data as JSON and puts it into the local MySQL database - this helps to avoid too many direct calls to the API. During the Coinwink page load, the page takes this JSON from MySQL and presents it as price information for each coin, and also creates option values for the coins drop-down list.
 
 The "backend_" php scripts need to run every few minutes. On the production version the cron for these scripts is set to */3 minutes. Keep in mind that coinmarketcap.com API updates every 5 minutes.
-
+<br>
+<br>
 **Additional notes**
 
 If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the link[3] number in template-home.php on line 903. In this 'domain.com/coinwink' example, the number should be link[4]. Then you will be able to see the coin data in the drop-down list.
