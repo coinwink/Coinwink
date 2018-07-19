@@ -43,10 +43,6 @@ The `backend_` PHP scripts need to run every few minutes. On the production vers
 
 **Additional notes**
 
-If you are running your Coinwink instance in a subfolder, e.g. domain.com/coinwink, then increase the `link[3]` number in `template-home.php` on line 903. In this "domain.com/coinwink" example, the number should be `link[4]`. Then you will be able to see the coin data in the drop-down list.
-
-To be able to see the favicon, extract all files from the `favicon.zip` file to the same home directory and then edit favicon paths in Coinwink theme's `header.php` file.
-
 For web spam protection Coinwink is using "Captcha by BestWebSoft" plugin. Do not use any version of this plugin that is higher than 4.3.0. Captcha protection is enabled only when creating alerts without the Coinwink account.
 
 For filterable drop-down select the [Select2](https://select2.github.io/) is being used.
