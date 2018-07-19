@@ -900,7 +900,8 @@ var jsonAdapter=jQuery.fn.select2.amd.require('select2/data/customAdapter');
 
 // Get coin symbol from url
 var link = document.location.href.split('/');
-var urlSymbol = link[3].replace(/[^a-z0-9]/gi,'');
+var lastSymbol = link.length - 1;
+var urlSymbol = link[lastSymbol].replace(/[^a-z0-9]/gi,'');
 var urlSymbolUp = urlSymbol.toUpperCase();
 if (urlSymbol && (urlSymbolUp != "EMAIL") && (urlSymbolUp != "SMS") && (urlSymbolUp != "MANAGEALERTSACC") && (urlSymbolUp != "SETTINGS") && (urlSymbolUp != "PERCENT") && (urlSymbolUp != "PORTFOLIO")) {
 	for(var i=0; i < jqueryarray.length; i++) {
