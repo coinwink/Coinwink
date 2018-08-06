@@ -43,8 +43,6 @@ The `backend_` PHP scripts need to run every few minutes. On the production vers
 
 **Additional notes**
 
-For web spam protection Coinwink is using "Captcha by BestWebSoft" plugin. Do not use any version of this plugin that is higher than 4.3.0. Captcha protection is enabled only when creating alerts without the Coinwink account.
-
 For filterable drop-down select the [Select2](https://select2.github.io/) is being used.
 
 For downloading the new coin logos and for updating the existing ones, a separate script was created and is available at this [cryptocurrency-logos](https://github.com/dziungles/cryptocurrency-logos) repository.
