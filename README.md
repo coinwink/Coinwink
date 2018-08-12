@@ -2,7 +2,7 @@
 
 # Coinwink
 
-Coinwink is an automated web application for creating and receiving [cryptocurrency price alerts](https://coinwink.com/) for Bitcoin, Ethereum and other 1500+ crypto assets via e-mail and SMS, and for managing crypto-currency portfolio.
+Coinwink is an automated web application for creating and receiving [cryptocurrency price alerts](https://coinwink.com/) for Bitcoin, Ethereum... (1500+ crypto assets) via e-mail and SMS, and for managing crypto-currency portfolio.
 
 The application gets price and coin data from [coinmarketcap.com](http://coinmarketcap.com/) API.
 
