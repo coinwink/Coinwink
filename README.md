@@ -6,9 +6,9 @@ Coinwink is a web application for creating and receiving [cryptocurrency price a
 
 Coinwink's mission is to free people from constant crypto price checking. Coinwink checks prices and alerts the user when the threshold is reached. This creates a more detached perspective for the user and can result in better overall trading outcomes and better quality of life.
 
-The application gets price and coin data from [coinmarketcap.com](http://coinmarketcap.com/) API.
+The application gets price and coin data from [CoinMarketCap](http://coinmarketcap.com/) API.
 
-![screenshot](https://coinwink.com/img/github.png)
+![screenshot](https://coinwink.com/img/screenshot.png)
 
 Application stack: JavaScript, JQuery, PHP, MySQL, minimal Wordpress back-end.
 
