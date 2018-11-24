@@ -19,9 +19,7 @@ This repository provides the source code for the application. See installation i
 
 **Initial setup**
 
-First do a clean install of Wordpress.
-
-Then upload all files and folders from this repository to your Wordpress installation directory. This will place custom Coinwink theme and Coinwink login user accounts plugin in their proper locations.
+First do a clean install of Wordpress. Then upload all files and folders from this repository to your Wordpress installation directory. This will place custom Coinwink theme and Coinwink login user accounts plugin in their proper locations.
 
 Edit database login details in `coinwink_auth_sql.php` file and then open `coinwink_create_db.php` file in your browser (run it once). This will create database tables.
 
