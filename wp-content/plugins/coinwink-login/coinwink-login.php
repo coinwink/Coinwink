@@ -318,7 +318,11 @@ class Personalize_Login_Plugin {
 	public function do_register_user() {
 
 		// Captcha check, if good, then continue
-		$error = apply_filters( 'cptch_verify', true );
+        // $error = apply_filters( 'cptch_verify', true );
+        
+        // disable captcha
+        $error = true;
+
 		if ( true === $error ) { 
 
 			if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
@@ -331,7 +335,7 @@ class Personalize_Login_Plugin {
 				} else {
 					$email = $_POST['email'];
 
-					$result = $this->register_user( $email );
+					$result = $this->register_user( $email, '', '' );
 
 					if ( is_wp_error( $result ) ) {
 						// Parse errors into a string and append as parameter to redirect
@@ -527,11 +531,11 @@ class Personalize_Login_Plugin {
 		// Insert new user to coinwink_credits table
 		global $wpdb;
 
-		$unique_id = $wpdb->get_var( "SELECT unique_id FROM coinwink WHERE email = '".$email."'" );
+		$unique_id = $wpdb->get_var( "SELECT unique_id FROM cw_alerts_email_cur WHERE email = '".$email."'" );
 		if (!$unique_id) {
-		$unique_id = uniqid();
+            $unique_id = uniqid();
 		} 
-		$wpdb->insert( 'coinwink_settings', array( 'user_ID' => $user_id, 'unique_id' => $unique_id ));
+		$wpdb->insert( 'cw_settings', array( 'user_ID' => $user_id, 'unique_id' => $unique_id, 'email' => $email ));
 
 		return $user_id;
 	}
