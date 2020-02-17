@@ -1,4 +1,6 @@
-<img src="https://coinwink.com/img/coinwink-crypto-alerts-logo.png" width="44">&nbsp;&nbsp;**Crypto Alerts, Watchlist and Portfolio Tracking App**
+<img src="https://coinwink.com/img/coinwink-logo-horizontal-git.png" width="160">
+
+#### Crypto Alerts, Watchlist and Portfolio Tracking App ####
 
 [Coinwink](https://coinwink.com) was first built as a Wordpress web-app in 2016, and even now (2020) it continues to run on the same stack.
 
@@ -55,32 +57,12 @@ For currency rates conversion, two services are utilized. More info: `cron_data_
 
 ****Screenshots****
 
-<img src="https://coinwink.com/brand/files/screenshots/02-crypto-alerts.png?v=002" width="700">
+<img src="https://coinwink.com/brand/files/screenshots/02-crypto-alerts.png?v=002" width="700"><br><br>
+<img src="https://coinwink.com/brand/files/screenshots/03-alerts-management.png?v=002" width="700"><br><br>
+<img src="https://coinwink.com/brand/files/screenshots/05-watchlist.png?v=013" width="700"><br><br>
+<img src="https://coinwink.com/brand/files/screenshots/04-portfolio.png?v=011" width="700"><br><br>
+<img src="https://coinwink.com/brand/files/screenshots/01-navigation.png?v=001" width="700"><br><br><br>
 
-<br>
-<br>
-
-<img src="https://coinwink.com/brand/files/screenshots/03-alerts-management.png?v=002" width="700">
-
-<br>
-<br>
-
-<img src="https://coinwink.com/brand/files/screenshots/05-watchlist.png?v=013" width="700">
-
-<br>
-<br>
-
-<img src="https://coinwink.com/brand/files/screenshots/04-portfolio.png?v=011" width="700">
-
-<br>
-<br>
-
-<img src="https://coinwink.com/brand/files/screenshots/01-navigation.png?v=001" width="700">
-
-<br>
-<br>
-<br>
-<br>
 
 ****Development and Contribution****
 
