@@ -11,8 +11,6 @@ $rustart = getrusage();
 ini_set('memory_limit', '768M');
 
 // Increase allowed php script processing time to 30 min
-// @todo: test how it works with a big queue of emails
-// @todo: maybe test with newsletter, or maybe there is no limit on server side
 set_time_limit(1800);
 
 // Connect to Mysql
