@@ -1,8 +1,5 @@
 <?php
 
-// // Delay this script 30 sec to allow cmc_data script to complete first
-// sleep(30);
-
 // Check execution time - Start time
 $time_start = microtime(true);
 
@@ -30,7 +27,7 @@ $client = new Client($account_sid, $auth_token);
 
 
 // SMS template and sending
-function sendSMS($user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, $period) {
+function sendSMS($coin_ID, $user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, $period) {
     
     global $conn;
     global $client;
@@ -40,10 +37,12 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, 
 
     # SMS text
     if (isset($period["period"])) {
-        $text = 'Alert: '. ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% in '. $period["period"] .' period | coinwink.com';
+        $text = 'Alert: '. ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% in '. $period["period"] .' period - coinwink.com';
+        $text_log = ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% in '. $period["period"] .' period.';
     }
     else {
-        $text = 'Alert: '. ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% compared to '. $currency .' | coinwink.com';
+        $text = 'Alert: '. ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% compared to '. $currency .' - coinwink.com';
+        $text_log = ucfirst($coin) .' ('. ucfirst($symbol) .') '. $i_or_d .' by '. $change .'% compared to '. $currency .'.';
     }
 
     // Get user SMS settings
@@ -61,7 +60,7 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, 
         // Twilio paid
         try {
             $messages = $client->messages->create($dst, array( 
-                'From' => "+16506677888",  
+                'From' => "+16506677900",  
                 'Body' => $text,      
             ));
         } catch (Exception $e) {
@@ -81,8 +80,14 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, 
         $conn->query($sql);
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, timestamp) VALUES ('$user_ID', 'sms_per', '$dst', '$status', '$timestamp')";
+        $content = $text_log;
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, alert_ID, coin_ID, name, symbol, content, type, destination, status, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', 'sms_per', '$dst', '$status', '$time')";
         $conn->query($sql);
     }
 
@@ -90,8 +95,14 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $currency, $change, $i_or_d, 
     else {
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, error, timestamp) VALUES ('$user_ID', 'sms_per', '$dst', 'failed', 'No subs or credits', '$timestamp')";
+        $content = $text_log;
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, alert_ID, coin_ID, name, symbol, content, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', 'sms_per', '$dst', 'failed', 'No subs or credits', '$time')";
         $conn->query($sql);
         
         // get the user email address
@@ -190,7 +201,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to btc email sent \r\n");
                     
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'BTC', $row['plus_percent'], 'increased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'BTC', $row['plus_percent'], 'increased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -212,7 +223,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to btc email sent \r\n");
 
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'BTC', $row['minus_percent'], 'decreased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'BTC', $row['minus_percent'], 'decreased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -234,7 +245,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to usd email sent \r\n");
 
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -256,7 +267,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to usd email sent \r\n");
 
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -278,7 +289,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to eth email sent \r\n");
 
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'ETH', $row['plus_percent'], 'increased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'ETH', $row['plus_percent'], 'increased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -300,7 +311,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to eth email sent \r\n");
 
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'ETH', $row['minus_percent'], 'decreased', array());
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'ETH', $row['minus_percent'], 'decreased', array());
 
                         // Update DB
                         $ID = $row['ID'];
@@ -328,7 +339,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent 1h compared to usd email sent \r\n");
                         
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array('period' => '1h.'));
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array('period' => '1h.'));
 
                         // Update DB
                         $ID = $row['ID'];
@@ -350,7 +361,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent 1h compared to usd email sent \r\n");
                         
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array('period' => '1h.'));
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array('period' => '1h.'));
 
                         // Update DB
                         $ID = $row['ID'];
@@ -378,7 +389,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent 24h compared to usd email sent \r\n");
                         
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array('period' => '24h.'));
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', array('period' => '24h.'));
 
                         // Update DB
                         $ID = $row['ID'];
@@ -400,7 +411,7 @@ function processAlerts($alerts, $loop) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent 24h compared to usd email sent \r\n");
                         
                         // Email
-                        sendSMS($row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array('period' => '24h.'));
+                        sendSMS($jsoncoin['id'], $row['user_ID'], $row['phone'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', array('period' => '24h.'));
 
                         // Update DB
                         $ID = $row['ID'];

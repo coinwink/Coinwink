@@ -317,47 +317,30 @@ class Personalize_Login_Plugin {
 	 */
 	public function do_register_user() {
 
-		// Captcha check, if good, then continue
-        // $error = apply_filters( 'cptch_verify', true );
-        
-        // disable captcha
-        $error = true;
+		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
+			$redirect_url = home_url( 'account' );
 
-		if ( true === $error ) { 
+			if ( ! get_option( 'users_can_register' ) ) {
+				// Registration closed, display error
+				$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
 
-			if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
-				$redirect_url = home_url( 'account' );
+			} else {
+				$email = $_POST['email'];
 
-				if ( ! get_option( 'users_can_register' ) ) {
-					// Registration closed, display error
-					$redirect_url = add_query_arg( 'register-errors', 'closed', $redirect_url );
+				$result = $this->register_user( $email, '', '' );
 
+				if ( is_wp_error( $result ) ) {
+					// Parse errors into a string and append as parameter to redirect
+					$errors = join( ',', $result->get_error_codes() );
+					$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
 				} else {
-					$email = $_POST['email'];
-
-					$result = $this->register_user( $email, '', '' );
-
-					if ( is_wp_error( $result ) ) {
-						// Parse errors into a string and append as parameter to redirect
-						$errors = join( ',', $result->get_error_codes() );
-						$redirect_url = add_query_arg( 'register-errors', $errors, $redirect_url );
-					} else {
-						// Success, redirect to login page.
-						$redirect_url = home_url() . "/account/#registered";
-					}
+					// Success, redirect to login page.
+					$redirect_url = home_url() . "/account/#registered";
 				}
-
-				wp_redirect( $redirect_url );
-				exit;
 			}
 
-		}
-		else {		// Captcha check failed, display error
-					$redirect_url = home_url( 'account' );
-					$redirect_url = add_query_arg( 'register-errors', 'captcha', $redirect_url );
-					wp_redirect( $redirect_url );
-						
-					exit;
+			wp_redirect( $redirect_url );
+			exit;
 		}
 
 	}
@@ -393,11 +376,9 @@ class Personalize_Login_Plugin {
 		if ( 'POST' == $_SERVER['REQUEST_METHOD'] ) {
 			$rp_key = $_REQUEST['rp_key'];
 			$rp_login = $_REQUEST['rp_login'];
-	//		$user_ID = $_REQUEST['user_ID'];
 
 			$user = check_password_reset_key( $rp_key, $rp_login );
 
-	//		if (!user_ID) {
 			if ( ! $user || is_wp_error( $user ) ) {
 				if ( $user && $user->get_error_code() === 'expired_key' ) {
 					wp_redirect( home_url( 'account' . '#keyerror' ) );
@@ -406,7 +387,7 @@ class Personalize_Login_Plugin {
 				}
 				exit;
 			}
-	//		}
+
 
 			if ( isset( $_POST['pass1'] ) ) {
 				if ( strlen($_POST['pass1']) < 8 ) {
@@ -557,7 +538,7 @@ class Personalize_Login_Plugin {
 				wp_redirect( admin_url() );
 			}
 		} else {
-			wp_redirect( home_url( 'member-account' ) );
+			wp_redirect( home_url( 'account' ) );
 		}
 	}
 

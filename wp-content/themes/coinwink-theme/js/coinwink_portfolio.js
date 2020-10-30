@@ -29,11 +29,10 @@ function openPortfolio() {
 
 
 // Keep focus on select2
-jQuery('select').on(
-  'select2:close',
-  function () {
-    jQuery(this).focus();
-  }
+jQuery('select').on('select2:close',
+	function () {
+		jQuery(this).focus();
+	}
 );
 
 
@@ -42,77 +41,73 @@ jQuery("#portfolio_add_coin").click(function() {
   cwAddCoin();
 });
 
-
 function cwAddCoin() {
-  var coin_id = jQuery("#portfolio_dropdown").val();
+	var coin_id = jQuery("#portfolio_dropdown").val();
 
-  for (var i in jqueryarray) {
-      if (jqueryarray.hasOwnProperty(i)) {
-          if (jqueryarray[i]['id'] == coin_id) {
-              var website_slug = jqueryarray[i]['slug'];
-              break;
-          }
-      }
-  }
+	// get coin's slug
+	for (var i in jqueryarray) {
+		if (jqueryarray.hasOwnProperty(i)) {
+			if (jqueryarray[i]['id'] == coin_id) {
+				var website_slug = jqueryarray[i]['slug'];
+				break;
+			}
+		}
+	}
 
-  if (portfolio.length > 0) {
-      if (subs == 1 || portfolio.length < 5) {
-          var id = portfolio.length + 1;
-          var found = portfolio.some(function (i) {
-              return i.coin_id === coin_id;
-          });
-          if (!found) { portfolio.push({"coin_id" : coin_id, "amount": "0", "invested": "0", "invested_c": "USD", "note": "", "slug" : website_slug}); }    
-      }
-      else {
-          jQuery('#portfolio-message').show();
-      }
-  }
-  else {
-      if (subs == 1 || portfolio.length < 5) {
-          portfolio.push({"coin_id" : coin_id, "amount": "0", "invested": "0", "invested_c": "USD", "note": "", "slug" : website_slug});
-      }
-      else {
-          jQuery('#portfolio-message').show();
-      }
-  }
+	function addPortCoin() {
+		// var id = portfolio.length + 1;
+		var found = portfolio.some(function (i) {
+			return i.coin_id === coin_id;
+		});
+		if (!found) { 
+			portfolio.push({"coin_id" : coin_id, "amount": "0", "invested": "0", "invested_c": "USD", "note": "", "slug" : website_slug}); 
+		}
+	}
 
-  portfolio_save_2();
-  load_portfolio(portfolio);
+	if (subs == 1 || portfolio.length < 5) {
+		addPortCoin();
+	}
+	else if (limitEarly && portfolio.length < 10) {
+		addPortCoin();
+	}
+	else {
+		jQuery('#portfolio-message').show();
+	}
+
+	portfolio_save_2();
+    load_portfolio(portfolio); 
 }
 
 
-// Add coin
+// Remove coin
 jQuery("#portfolio_remove_coin").click(function() {
   cwRemoveCoin();
 });
 
-
-// REMOVE COIN
-
 function cwRemoveCoin() {
-  var coin_id = jQuery("#portfolio_dropdown").val();
+	var coin_id = jQuery("#portfolio_dropdown").val();
 
-  for (var i = 0; i < portfolio.length; i++) {
-          if (portfolio[i]["coin_id"] === coin_id) {
-              portfolio.splice(i,1);
-              break;
-          }
-  }
+	for (var i = 0; i < portfolio.length; i++) {
+	if (portfolio[i]["coin_id"] === coin_id) {
+		portfolio.splice(i,1);
+		break;
+	}
+	}
 
-  if (portfolio.length < 1){
-      portfolio = [];
+	if (portfolio.length < 1){
+		portfolio = [];
 
-      var data="&data="+JSON.stringify(portfolio);
+		var data="&data="+JSON.stringify(portfolio);
 
-      jQuery.ajax({
-          type:"POST",
-          url: ajax_url,
-          data: 'action=update_portfolio'+data+security_url
-      });
-  };
+		jQuery.ajax({
+			type:"POST",
+			url: ajax_url,
+			data: 'action=update_portfolio'+data+security_url
+		});
+	};
 
-  portfolio_save_2();
-  load_portfolio(portfolio);	
+	portfolio_save_2();
+	load_portfolio(portfolio);	
 }
 
 
@@ -137,9 +132,9 @@ function load_portfolio(json) {
             var headerRow = '';
             var bodyRows = '';
 
-            headerRow += '<select onchange="selectcurrency(1)" id="selectcurrency1" class="select-css"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option><option value="CAD">CAD</option><option value="BRL">BRL</option><option value="MXN">MXN</option><option value="JPY">JPY</option><option value="SGD">SGD</option><option value="percent">%</option></select>'
+            headerRow += '<select onchange="selectcurrency(1)" id="selectcurrency1" class="select-css"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="percent">%</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option><option value="CAD">CAD</option><option value="BRL">BRL</option><option value="MXN">MXN</option><option value="JPY">JPY</option><option value="SGD">SGD</option></select>'
 
-            headerRow += '<th width="40">Coin</th><th width="70">Price</th><th width="50">24H</th><th width="70">Amount</th><th  width="70">Value</th>';
+            headerRow += '<div class="grid-portfolio-titles"><div>Coin</div><div>Price</div><div>24H</div><div>Amount</div><div>Value</div>';
 
             var portfolio2 = [];
 
@@ -148,13 +143,13 @@ function load_portfolio(json) {
 
                 function calculateValue(coin_id, amount) {
                     for(var i = 0; i < jqueryarray.length; i++) {
-                    var coin = jqueryarray[i];
-                    if (coin['id'] == coin_id) {
-                        var coin_value = coin['price_usd'] * amount;
-                        coin_value = Number(coin_value).toFixed(2);
-                        return coin_value;
-                    }
-                }
+						var coin = jqueryarray[i];
+						if (coin['id'] == coin_id) {
+							var coin_value = coin['price_usd'] * amount;
+							coin_value = Number(coin_value).toFixed(2);
+							return coin_value;
+						}
+					}
                 }
 
                 var coin_value = calculateValue(coin["coin_id"], coin["amount"]);
@@ -233,9 +228,12 @@ function load_portfolio(json) {
                     for(var i = 0; i < jqueryarray.length; i++) {
                         var coin = jqueryarray[i];
                         if (coin['id'] == coin_id) {
+                            if (coin['per_24h'] == null) {
+                              return "---";
+                            }
                             var coin_24h = coin['per_24h'].toFixed(2) + '%';
                             if (coin_24h.startsWith('-')) {
-                                return ('<span style="color:#d14836;">' + coin_24h + '</span>');
+                                return ('<span class="pw-minus">' + coin_24h + '</span>');
                             }
                             else if (coin_24h == "0.00%") {
                                 return "0.00%";
@@ -244,121 +242,101 @@ function load_portfolio(json) {
                                 return "---";
                             }
                             else {
-                                return ('<span style="color:#093;">' + coin_24h + '</span>');
+                                return ('<span class="pw-plus">' + coin_24h + '</span>');
                             }
                         }
                     }
                 }
 
                 function invested_c(currency) {
+                    var selected_BTC, selected_ETH, selected_USD, selected_EUR, selected_CAD, selected_AUD, selected_MXN, selected_BRL, selected_JPY, selected_SGD = '';
+
                     if (row["invested_c"] == "USD") {
-                        return '<select class="invested_c" onchange="portfolio_save()" id="'+row["coin_id"]+'-invested_c"><option value="USD" selected>USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option></select>'
+                        var selected_USD = 'selected';
                     }
                     if (row["invested_c"] == "BTC") {
-                        return '<select class="invested_c" onchange="portfolio_save()" id="'+row["coin_id"]+'-invested_c"><option value="USD">USD</option><option value="BTC" selected>BTC</option><option value="ETH">ETH</option></select>'
+                        var selected_BTC = 'selected';
                     }
                     if (row["invested_c"] == "ETH") {
-                        return '<select class="invested_c" onchange="portfolio_save()" id="'+row["coin_id"]+'-invested_c"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH" selected>ETH</option></select>'
+                        var selected_ETH = 'selected';
                     }
-                }
-
-                function profit(coin_id) {
-
-                    var invested_c = row["invested_c"];
-
-                    if (row["invested"] == 0) {
-                        return("0.00");
+                    if (row["invested_c"] == "EUR") {
+                        var selected_EUR = 'selected';
                     }
-                    else {
-                        for(var i = 0; i < jqueryarray.length; i++) {
-                            var coin = jqueryarray[i];
-
-                            var invested_c_l = invested_c.toLowerCase();
-
-                            if (coin['id'] == coin_id) {
-                                // get 1 coin price in invested currency
-                                var coin_price = coin['price_'+invested_c_l];
-                                // get total price for all coins in invested currency
-                                var total_price = coin_price * row["amount"];
-                                // get total investment in invested currency
-                                var total_invested = row["invested"];
-                                // profit = current total price minus total investment in invested currency
-                                var profit = (total_price - total_invested);
-
-                                for(var i = 0; i < jqueryarray.length; i++) {
-                                    var coin = jqueryarray[i];
-                                    if (coin['symbol'] == invested_c) {
-                                        invested_c_price_usd = coin['price_usd'];
-                                        break;
-                                    }
-                                }
-                                
-                                if (invested_c != "USD") {
-                                    var profit = profit * invested_c_price_usd;
-                                }
-
-                                // convert to string
-                                var profit = profit.toFixed(2).toString();
-
-                                // // cut string
-                                // if (profit.length > 7) { profit = profit.substring(0, 7) }
-                                // if (profit.slice(-1) == ".") { profit = profit.slice(0, -1)}
-
-                                // return(profit+"%");
-                                return profit;
-                            }
-                        }
+                    if (row["invested_c"] == "GBP") {
+                        var selected_GBP = 'selected';
                     }
+                    if (row["invested_c"] == "AUD") {
+                        var selected_AUD = 'selected';
+                    }
+                    if (row["invested_c"] == "CAD") {
+                        var selected_CAD = 'selected';
+                    }
+                    if (row["invested_c"] == "BRL") {
+                        var selected_BRL = 'selected';
+                    }
+                    if (row["invested_c"] == "MXN") {
+                        var selected_MXN = 'selected';
+                    }
+                    if (row["invested_c"] == "SGD") {
+                        var selected_SGD = 'selected';
+                    }
+                    if (row["invested_c"] == "JPY") {
+                        var selected_JPY = 'selected';
+                    }
+
+                    return '<select class="select-css-currency roi" onchange="portfolio_roi(&#x27;'+row["coin_id"]+'&#x27;)" id="'+row["coin_id"]+'-invested_c"><option value="USD" '+selected_USD+'>USD</option><option value="BTC" '+selected_BTC+'>BTC</option><option value="ETH" '+selected_ETH+'>ETH</option><option value="EUR" '+selected_EUR+'>EUR</option><option value="GBP" '+selected_GBP+'>GBP</option><option value="AUD" '+selected_AUD+'>AUD</option><option value="CAD" '+selected_CAD+'>CAD</option><option value="BRL" '+selected_BRL+'>BRL</option><option value="MXN" '+selected_MXN+'>MXN</option><option value="JPY" '+selected_JPY+'>JPY</option><option value="SGD" '+selected_SGD+'>SGD</option></select>'
+
                 }
                 
-                bodyRows += '<td rowspan="2" width="45" class="portfoliocoinid" id="'+
+                bodyRows += '<div class="grid-portfolio-structure-outer-0"><div class="grid-portfolio-structure-outer-1"><div class="portfoliocoinid" id="'+
                 row["coin_id"]+
                 '"><a target="_blank" style="padding-top: 0px;" class="portfoliocoin" href="https://coinmarketcap.com/currencies/' +
                 row["slug"] +
-                '"><img src="'+homePath+'/img/coins/32x32/'+
+                '/"><img src="'+homePath+'img/coins/32x32/'+
                 row["coin_id"]+
-                '.png" width="25" style="padding-top:2px"><br>'+
+                '.png" width="25"><br>'+
                 getCoinName(row["coin_id"]) +
-                '</a></td>';
+                '</a></div>';
 
-                bodyRows += '<td width="70" height="35" id="'+row["coin_id"]+'-price"><b>'+
-                formatCurrencyDecimalMax(getCoinPrice(row["coin_id"]), selectedCurrency) + 
-                '</b></td>';
+                bodyRows += '<div class="grid-portfolio-structure-outer-2"><div class="grid-portfolio-structure-inner"><div id="p-'+row["coin_id"]+'-price"><b>'+
+                formatCurrencyDecimalMax(getCoinPrice(row["coin_id"]), cur_p) + 
+                '</b></div>';
 
-                bodyRows += '<td class="coin24" width="50" id="'+row["coin_id"]+'-24h"><b>' + getCoin24h(row["coin_id"]) + '</b></td>';
+                bodyRows += '<div class="coin24" id="'+row["coin_id"]+'-24h"><b>' + getCoin24h(row["coin_id"]) + '</b></div>';
 
-                bodyRows += '<td width="70""><input value="'+
+                bodyRows += '<div style="margin-top:-2px;"><input value="'+
                 row["amount"]+
-                '" maxlength="99" class="portfoliocoinamount entersave blursave_2" id="'+row["coin_id"]+'-amount" name="" type="text" required></td>';
+                '" maxlength="99" class="portfoliocoinamount entersave blursave_2" id="'+row["coin_id"]+'-amount" name="" type="text"></div>';
 
-                bodyRows += '<td class="coinvalue" width="70" id="'+row["coin_id"]+'-value"><b>' + formatCurrencyDecimal(row["value"], selectedCurrency) + '</b></td></tr>';
+                bodyRows += '<div class="coinvalue" id="'+row["coin_id"]+'-value"><b>' + formatCurrencyDecimal(row["value"], cur_p) + '</b></div></div>';
 
-                bodyRows += '<tr><td colspan="4" style="padding-bottom:0px;"><div class="portfolio-tools"><div class="note-img" style="margin-left:10px;"><div title="Notes" onclick="display_note(&#x27;'+row["coin_id"]+'&#x27;)" style="cursor:pointer;"><svg width="20" height="16"><use xlink:href="#portfolio-note"></use></svg></div></div><div class="note-img" title="ROI" style="cursor:pointer;" onclick="display_profit(&#x27;'+row["coin_id"]+'&#x27;)"><svg width="20" height="16"><use xlink:href="#portfolio-profitloss"></use></svg></div></div></div></td></tr>';
+                bodyRows += '<div><div style="padding-bottom:0px;"><div class="portfolio-tools"><div class="note-img" style="margin-left:6.5px;"><div onclick="display_note(&#x27;'+row["coin_id"]+'&#x27;)"><svg width="20" height="17" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 107.67 107.67"><title>Notes</title><g class="svg-portfolio-icon"><path d="M10.45,3.25H97.22a7.22,7.22,0,0,1,7.2,7.2V97.22a7.22,7.22,0,0,1-7.2,7.2H10.45a7.22,7.22,0,0,1-7.2-7.2V10.45a7.22,7.22,0,0,1,7.2-7.2Z" style="fill:none;stroke-miterlimit:2.613126039505005;stroke-width:6.5001301765441895px"/><path d="M23.84,33.14h60m-60,20.7h60m-60,20.7h31.4" style="fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-width:6.5001301765441895px"/></g></svg></div></div><div class="note-img"  onclick="display_profit(&#x27;'+row["coin_id"]+'&#x27;)"><svg width="20" height="17" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 125.37 107.67"><title>ROI</title><g class="svg-portfolio-icon"><path d="M94.79,21.57H120.1a2,2,0,0,1,2,2v78.79a2,2,0,0,1-2,2H94.79a2,2,0,0,1-2-2V23.6a2,2,0,0,1,2-2ZM50,3.25H75.34a2,2,0,0,1,2,2v97.11a2,2,0,0,1-2,2H50a2,2,0,0,1-2-2V5.28a2,2,0,0,1,2-2ZM5.28,62h25.3a2,2,0,0,1,2,2v38.38a2,2,0,0,1-2,2H5.28a2,2,0,0,1-2-2V64a2,2,0,0,1,2-2Z" style="fill:none;stroke-linejoin:round;stroke-width:6.5001301765441895px"/></g></svg></div></div></div></div></div></div>';
 
                 // Profit loss
-                bodyRows += '<tr class="note-tr '+row["coin_id"]+'-profit-tr" style="border-bottom: 1px dashed grey;"><td colspan="100%"></td></tr><tr class="note-tr '+
-                row["coin_id"]+'-profit-tr note-tr"><td colspan="100%"><div class="profit"><div class="total-div">Total investment<br><input value="'+
+                bodyRows += '<div class="note-tr '+row["coin_id"]+'-profit-tr" style="border-top: 1px dashed grey;"><div class="note-tr '+
+                row["coin_id"]+'-profit-tr note-tr" style="width:275px;margin:0 auto;"><div class="profit"><div class="total-div">Total investment<div style="height:4px;"></div><input value="'+
                 row["invested"]+
-                '" maxlength="99" class="invested entersave" onchange="portfolio_save()" id="'+row["coin_id"]+'-invested"' +
+                '" maxlength="99" class="invested" onchange="portfolio_roi(&#x27;'+row["coin_id"]+'&#x27;)" id="'+row["coin_id"]+'-invested"' +
                 ' name="" type="number">' +
                 invested_c(row["invested_c"]) +
-                '</div><div class="profit-div" id="'+row["coin_id"]+'-profit">Profit/Loss<br><span id="'+row["coin_id"]+'-profit-span" style="margin-right:1px;">'+profit(row["coin_id"])+
-                '</span>&nbsp;<select id="changeProfitCurrency-'+row["coin_id"]+'" class="invested_c" onchange="changeProfitCurrency(&#x27;'+row["coin_id"]+'&#x27;)"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="percent">%</option></select></div></td></tr>';
+                '</div><div class="profit-div" id="'+row["coin_id"]+'-profit">Profit/Loss<div style="height:4px;"></div><span id="'+row["coin_id"]+'-profit-span" style="margin-right:1px;">'+getProfit(row["coin_id"], row["invested"], row["invested_c"], row["amount"])+
+                '</span>&nbsp;<select id="changeProfitCurrency-'+row["coin_id"]+'" class="select-css-currency roi" onchange="changeProfitCurrency(&#x27;'+row["coin_id"]+'&#x27;)"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="percent">%</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option><option value="CAD">CAD</option><option value="BRL">BRL</option><option value="MXN">MXN</option><option value="JPY">JPY</option><option value="SGD">SGD</option></select></div></div></div></div>';
 
                 // Note
-                bodyRows += '<tr class="note-tr '+row["coin_id"]+'-note-tr" style="border-bottom: 1px dashed grey;">'+
-                '<td colspan="100%"></td></tr><tr class="note-tr '+row["coin_id"]+'-note-tr note-tr"><td colspan="100%">'+
-                // '<div class="note-save-div"><img src="https://coinwink.com/img/save.png" width="17" onclick="portfolio_save_2()" style="cursor:pointer;" title="Save"></div>'+
-                '<div class="note-div"><textarea id="'+row["coin_id"]+'-note" maxlength="800" placeholder="Place for your '+getCoinName(row["coin_id"])+' notes" class="note-textarea blursave_2" rows="4">'+row["note"]+'</textarea></div>'+
-                '</td></tr><tr style="border-bottom:1px solid #918f7b"><td colspan="100%"></td></tr>';
+                bodyRows += '<div class="note-tr '+row["coin_id"]+'-note-tr" style="border-top: 1px dashed grey;">'+
+                '<div class="note-tr '+row["coin_id"]+'-note-tr note-tr">'+
+                '<div class="note-div"><textarea id="'+row["coin_id"]+'-note" maxlength="1000" placeholder="Place for your '+getCoinName(row["coin_id"])+' notes" class="note-textarea blursave_3" rows="4">'+row["note"]+'</textarea></div>'+
+                '</div></div><div class="pw-separator"></div>';
+
+                bodyRows += '</div></div>'; // grids end
                 
             });
 
-            return '<table class="portfoliotable"><thead><tr>' +
+            return '<table class="portfoliotable">' +
             headerRow +
-            '</tr></thead><tbody>' +
             bodyRows +
-            '</tbody></table>Total value: <b><span id="totalValue"></span></b>&nbsp;&nbsp;<select style="padding:2px;padding-left:0px;font-size:12px;" onchange="selectcurrency(2)" id="selectcurrency2" class="selectcurrency-bottom"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option><option value="CAD">CAD</option><option value="BRL">BRL</option><option value="MXN">MXN</option><option value="JPY">JPY</option><option value="SGD">SGD</option><option value="percent">%</option></select><br>__________________________________________<div style="height:20px;"></div>';
+            '<div style="height:24px;"></div>Total value: <b><span id="totalValue"></span></b><select class="select-css-currency total-val" onchange="selectcurrency(2)" id="selectcurrency2"><option value="USD">USD</option><option value="BTC">BTC</option><option value="ETH">ETH</option><option value="percent">%</option><option value="EUR">EUR</option><option value="GBP">GBP</option><option value="AUD">AUD</option><option value="CAD">CAD</option><option value="BRL">BRL</option><option value="MXN">MXN</option><option value="JPY">JPY</option><option value="SGD">SGD</option></select><div style="height:10px;"></div><div class="pw-line"></div>';
             
         }
         jQuery('#portfolio_content').html(build_table(portfolio));
@@ -374,6 +352,10 @@ function load_portfolio(json) {
 
         jQuery('.blursave_2').focusout(function(){ 
           portfolio_save();
+        });
+
+        jQuery('.blursave_3').focusout(function(){ 
+            portfolio_save_2(true);
         });
 
         jQuery('.entersave_2').keydown(function(event){ 
@@ -402,10 +384,13 @@ function load_portfolio(json) {
 
         // totalValue = Number(totalValue).toFixed(2);
 
-        totalValue = formatCurrencyDecimalMax(totalValue, selectedCurrency);
+        totalValue = formatCurrencyDecimalMax(totalValue, cur_p);
         jQuery("#totalValue").html(totalValue);
 
     }
+    selectcurrency();
+    jQuery('#selectcurrency1').val(cur_p);
+    jQuery('#selectcurrency2').val(cur_p);
 }
 
 
@@ -435,7 +420,7 @@ function portfolio_save(){
 }
 
 
-function portfolio_save_2(first) {
+function portfolio_save_2(first){
 
     if (first) {
       portfolio.forEach(function(coin) {
@@ -474,6 +459,20 @@ function display_note(id) {
 }
 
 
+
+function getProfit(coin_id, invested, invested_c, amount) {
+
+	if (invested == 0) {
+		return("0.00");
+	}
+
+	var profit = changeProfitCurrency(coin_id, invested, invested_c, amount);
+
+	return(profit);
+}
+
+
+
 function display_profit(id) {
     if(jQuery("."+id+"-profit-tr").is(":hidden")) {
         jQuery("."+id+"-profit-tr").show();
@@ -485,30 +484,94 @@ function display_profit(id) {
 }
 
 
-function changeProfitCurrency(id) {
 
-    selected_c = jQuery("#changeProfitCurrency-"+id+" option:selected").val();
-    selected_c_l = selected_c.toLowerCase();
+function portfolio_roi(id){
+    // console.log(id);
 
-    var invested_c = jQuery("#"+id+"-invested_c").val();
-    var invested_c_l = invested_c.toLowerCase();
-    invested = jQuery("#"+id+"-invested").val();
-    amount = jQuery("#"+id+"-amount").val();
+    portfolio.forEach(function(coin) {
+        coin.amount = jQuery("#"+coin.coin_id + "-amount").val().replace(/,/g, '.');
+        coin.invested = jQuery("#"+coin.coin_id + "-invested").val();
+        coin.invested_c = jQuery("#"+coin.coin_id + "-invested_c").val();
+        coin.note = jQuery("#"+coin.coin_id + "-note").val().replace(/\n/g, "4dW4t");
+    });
 
-    if (invested == "0") {
-        return;
-    }
+    // console.log(portfolio);
+    // return;
+
+    var data="&data="+JSON.stringify(portfolio);
+
+    jQuery.ajax({
+        type:"POST",
+        url: ajax_url,
+        data: 'action=update_portfolio'+data+security_url
+    }); 
+
+    window.portfolio = portfolio;
+
+    changeProfitCurrency(id);
+}
+
+
+function changeProfitCurrency(id, invested, invested_c, amount) {
+
+	// console.log(id);
+
+	if (typeof(invested) == 'undefined') {
+		var initialRoiLoad = false;
+		var selected_c = jQuery("#changeProfitCurrency-"+id+" option:selected").val();
+	
+		var invested_c = jQuery("#"+id+"-invested_c").val();
+		var invested = jQuery("#"+id+"-invested").val();
+		var amount = jQuery("#"+id+"-amount").val();
+	
+		if (invested == "0") {
+			return;
+		}
+	}
+	else {
+		var initialRoiLoad = true;
+		var selected_c = 'USD';
+	}
+
+	var invested_c_l = invested_c.toLowerCase();
+	
 
     if (selected_c == "percent") {
-        // Calculate PERCENT profit
+        // Calculate profit in PERCENTAGE
         for(var i = 0; i < jqueryarray.length; i++) {
             var arraycoin = jqueryarray[i];
             if (arraycoin['id'] == id) {
 
-                net_profit = amount * arraycoin["price_"+invested_c_l];
+                if (invested_c == 'USD' || invested_c == 'BTC' || invested_c == 'ETH' ) {
+                    var net_profit = amount * arraycoin["price_"+invested_c_l];
+                }
+                else if (invested_c == 'EUR') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['eur'];
+                }
+                else if (invested_c == 'GBP') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['gbp'];
+                }
+                else if (invested_c == 'CAD') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['cad'];
+                }
+                else if (invested_c == 'AUD') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['aud'];
+                }
+                else if (invested_c == 'MXN') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['mxn'];
+                }
+                else if (invested_c == 'BRL') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['brl'];
+                }
+                else if (invested_c == 'SGD') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['sgd'];
+                }
+                else if (invested_c == 'JPY') {
+                    var net_profit = amount * arraycoin["price_usd"] * rates['jpy'];
+                }
 
                 // console.log(amount, invested, net_profit);
-                profit = (net_profit / invested * 100);
+                var profit = (net_profit / invested * 100);
                 profit = profit - 100;
                 profit = profit.toFixed(2) + '%';
                 if (profit == "Infinity%") {
@@ -519,71 +582,133 @@ function changeProfitCurrency(id) {
         }
     }
     else {
-        // Get profit in usd and convert in selected currency
+        // Get profit in usd and convert to selected currency
         for(var i = 0; i < jqueryarray.length; i++) {
             var arraycoin = jqueryarray[i];
 
             if (arraycoin['id'] == id) {
+                var currentValue = amount * arraycoin["price_usd"];
+                var investedValue = invested;
 
-                // get 1 coin price in invested currency
-                var coin_price = arraycoin['price_'+invested_c_l];
-                // get total price for all coins in invested currency
-                var total_price = coin_price * amount;
-                // get total investment in invested currency
-                var total_invested = invested;
-                // profit in invested currency
-                var profit = (total_price - total_invested);  // ETH BTC USD
-
-                // console.log(invested_c_l, coin_price, total_price, total_invested, profit)
-
-                // convert profit from invested currency to usd, unless it is already in usd
-                if (invested_c_l != "usd") {
-                    for(var i = 0; i < jqueryarray.length; i++) {
-                        var arraycoin = jqueryarray[i];
-                        if (arraycoin['symbol'] === invested_c) {
-                            invested_c_price_usd = arraycoin['price_usd'];
-                        }
-                    }
-                    var profit = profit * invested_c_price_usd;
-                    var profit = profit.toFixed(2).toString();
+                // convert invested value to usd
+                if (invested_c == 'BTC') {
+                    investedValue = investedValue * jqueryarray[0]['price_usd'];
                 }
-                else {
-                    var profit = profit.toFixed(2).toString();
+                else if (invested_c == 'ETH') {
+                    investedValue = investedValue * jqueryarray[1]['price_usd'];
                 }
+                else if (invested_c == 'EUR') {
+                    investedValue = investedValue / rates['eur'];
+                }
+                else if (invested_c == 'GBP') {
+                    investedValue = investedValue / rates['gbp'];
+                }
+                else if (invested_c == 'CAD') {
+                    investedValue = investedValue / rates['cad'];
+                }
+                else if (invested_c == 'AUD') {
+                    investedValue = investedValue / rates['aud'];
+                }
+                else if (invested_c == 'MXN') {
+                    investedValue = investedValue / rates['mxn'];
+                }
+                else if (invested_c == 'BRL') {
+                    investedValue = investedValue / rates['brl'];
+                }
+                else if (invested_c == 'SGD') {
+                    investedValue = investedValue / rates['sgd'];
+                }
+                else if (invested_c == 'JPY') {
+                    investedValue = investedValue / rates['jpy'];
+                }
+
+                var profit = currentValue - investedValue;
+
+                // console.log(profit);
+                // return;
+
+                if (selected_c == 'BTC') {
+                    profit = profit / jqueryarray[0]['price_usd'];
+                }
+                else if ( selected_c == 'ETH' ) {
+                    profit = profit / jqueryarray[1]['price_usd'];
+                }
+                else if (selected_c == 'EUR') {
+                    profit = profit * rates['eur'];
+                }
+                else if (selected_c == 'GBP') {
+                    profit = profit * rates['gbp'];
+                }
+                else if (selected_c == 'CAD') {
+                    profit = profit * rates['cad'];
+                }
+                else if (selected_c == 'AUD') {
+                    profit = profit * rates['aud'];
+                }
+                else if (selected_c == 'MXN') {
+                    profit = profit * rates['mxn'];
+                }
+                else if (selected_c == 'BRL') {
+                    profit = profit * rates['brl'];
+                }
+                else if (selected_c == 'SGD') {
+                    profit = profit * rates['sgd'];
+                }
+                else if (selected_c == 'JPY') {
+                    profit = profit * rates['jpy'];
+                }
+
+                // console.log(profit);
 
                 // convert profit to selected currency
                 if (selected_c == "BTC") {
-                    var profit = profit / jqueryarray[0]["price_usd"];
-                    var profit = profit.toFixed(6).toString();
+                    profit = profit.toFixed(6).toString();
                 }
-                if (selected_c == "ETH") {
-                    var profit = profit / jqueryarray[1]["price_usd"];
-                    var profit = profit.toFixed(5).toString();
+                else if (selected_c == "ETH") {
+                    profit = profit.toFixed(6).toString();
+                }
+                else {
+                    profit = formatCurrencyDecimal(profit, 'usd');
                 }
 
-                jQuery("#" + id + "-profit-span").html(profit);
-
+				if (!initialRoiLoad) {
+					jQuery("#" + id + "-profit-span").html(profit);
+				}
+				else {
+					return(profit);
+				}
+            
             }
         }
-    }
-     
+    }    
+    
 }
 
 
 function selectcurrency(id) {
-    if(id == 1) {
-        newSelectedCurrency = jQuery("#selectcurrency1 option:selected").val();
-        jQuery("#selectcurrency2").val(newSelectedCurrency);
+    if(typeof(id) != 'undefined') {
+        if(id == 1) {
+            newcur_p = jQuery("#selectcurrency1 option:selected").val();
+            jQuery("#selectcurrency2").val(newcur_p);
+        }
+        else if (id == 2) {
+            newcur_p = jQuery("#selectcurrency2 option:selected").val();
+            jQuery("#selectcurrency1").val(newcur_p);
+        }
+        cur_p = jQuery("#selectcurrency"+id+" option:selected").val();
+        cur_pLower = cur_p.toLowerCase();
+
+        jQuery.ajax({
+            type: 'POST',
+            url: ajax_url,
+            data: 'action=config_cur_p' + '&cur_p=' + cur_p + security_url
+        })
     }
-    else if (id == 2) {
-        newSelectedCurrency = jQuery("#selectcurrency2 option:selected").val();
-        jQuery("#selectcurrency1").val(newSelectedCurrency);
+    else {
+        cur_pLower = cur_p.toLowerCase();
     }
 
-    selectedCurrency = jQuery("#selectcurrency"+id+" option:selected").val();
-    selectedCurrencyLower = selectedCurrency.toLowerCase();
-
-    if (selectedCurrency == "percent") {
+    if (cur_p == "percent") {
         function change_to_percent() {
             var total_value = parseFloat((jQuery("#totalValue").html()).replace(/[^\d.-]/g, ''));
             // console.log(total_value);
@@ -615,72 +740,58 @@ function selectcurrency(id) {
                     if (arraycoin['id'] == coin.coin_id) {
                       
                         // get price and value
-                        coin_price = arraycoin['price_'+selectedCurrencyLower]
-                        coin_value = coin_price * coin.amount;
 
-                        
                         // show ETH and BTC price in their own cur as 1.00
-                        if (coin.slug == "ethereum" && selectedCurrency == "ETH" || coin.slug == "bitcoin" && selectedCurrency == "BTC") {
-                          jQuery("#" + coin.coin_id + "-price").html("<b>"+Number(coin_price).toFixed(2)+"</b>");
+                        if (coin.slug == "ethereum" && cur_p == "ETH" || coin.slug == "bitcoin" && cur_p == "BTC") {
+                            coin_price = arraycoin['price_'+cur_p.toLowerCase()]
+                            coin_value = coin_price * coin.amount;
+                            
+                            jQuery("#p-" + coin.coin_id + "-price").html("<b>"+Number(coin_price).toFixed(2)+"</b>");
 
-                          if (selectedCurrency == "ETH") {
+                            if (cur_p == "ETH") {
                             jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(5)+"</b>");
-                          }
-                          else if (selectedCurrency == "BTC") {
+                            }
+                            else if (cur_p == "BTC") {
                             jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(6)+"</b>");
-                          }
-
-                          return;
-                        }
-
-                        if (selectedCurrency != "BTC" && selectedCurrency != "ETH") {
-
-                          // coin_price = parseFloat(coin_price).toFixed(2);
-
-                          if (coin_price < 1 && coin_price > 0.1) {
-                            coin_price = parseFloat(coin_price).toFixed(2);
-                          }
-                          if (coin_price < 0.1 && coin_price > 0.01) {
-                            coin_price = parseFloat(coin_price).toFixed(3);
-                          } 
-                          else if (coin_price < 0.01 && coin_price > 0.001) {
-                            coin_price = parseFloat(coin_price).toFixed(4);
-                          }
-                          else if (coin_price < 0.001 && coin_price > 0.0001) {
-                            coin_price = parseFloat(coin_price).toFixed(5);
-                          }
-                          else if (coin_price < 0.0001 && coin_price > 0.00001) {
-                            coin_price = parseFloat(coin_price).toFixed(6);
-                          }
-                          else if (coin_price < 0.00001) {
-                            coin_price = parseFloat(coin_price).toFixed(7);
-                          }
-                          else { 
-                            coin_price = parseFloat(coin_price).toFixed(2); 
-                          }
-
-                          jQuery("#" + coin.coin_id + "-price").html("<b>"+coin_price+"</b>");
-
-                        }
-                        else if (selectedCurrency == "BTC") {
-                          jQuery("#" + coin.coin_id + "-price").html("<b>"+coin_price.toFixed(8)+"</b>");
-                        }
-                        else if (selectedCurrency == "ETH") {
-                          jQuery("#" + coin.coin_id + "-price").html("<b>"+coin_price.toFixed(7)+"</b>");
-                        }
-
-
-                        if (selectedCurrency == "ETH") {
-                          jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(5)+"</b>");
-                        }
-                        else if (selectedCurrency == "BTC") {
-                          jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(6)+"</b>");
+                            }
                         }
                         else {
-                          jQuery("#" + coin.coin_id + "-value").html("<b>"+formatCurrencyDecimal(coin_value, selectedCurrency)+"</b>");
+                            if (cur_p != "BTC" && cur_p != "ETH") {
+
+                                if (cur_p == "USD") {
+                                    coin_price = arraycoin['price_usd'];
+
+                                    coin_value = coin_price * coin.amount;
+                                    
+                                    coin_price = formatPrice(coin_price);
+                                }
+                                else {
+                                    coin_price = arraycoin['price_usd'] * rates[cur_p.toLowerCase()];
+
+                                    coin_value = coin_price * coin.amount;
+                                    
+                                    coin_price = formatPrice(coin_price);
+                                }
+                                jQuery("#p-" + coin.coin_id + "-price").html("<b>"+coin_price+"</b>");
+                                jQuery("#" + coin.coin_id + "-value").html("<b>"+formatCurrencyDecimal(coin_value, cur_p)+"</b>");
+                            }
+                            else if (cur_p == "BTC") {    
+                                coin_price = arraycoin['price_btc'];
+                                coin_value = coin_price * coin.amount;
+                                jQuery("#p-" + coin.coin_id + "-price").html("<b>"+coin_price.toFixed(8)+"</b>");
+                                jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(6)+"</b>");
+                            }
+                            else if (cur_p == "ETH") {
+                                coin_price = arraycoin['price_eth'];
+                                coin_value = coin_price * coin.amount;
+                                jQuery("#p-" + coin.coin_id + "-price").html("<b>"+coin_price.toFixed(7)+"</b>");
+                                jQuery("#" + coin.coin_id + "-value").html("<b>"+Number(coin_value).toFixed(5)+"</b>");
+                            }
                         }
+
                     }
                 }
+
             });
         }
         price();
@@ -690,12 +801,14 @@ function selectcurrency(id) {
             number = parseFloat(jQuery(this).text().replace(/,/g, ''));
             totalValue += number;
         });
-        if (selectedCurrency == "USD" || selectedCurrency == "EUR"  || selectedCurrency == "GBP" || selectedCurrency == "AUD" || selectedCurrency == "CAD" || selectedCurrency == "BRL" || selectedCurrency == "MXN" || selectedCurrency == "SGD" || selectedCurrency == "JPY") {
+        if (cur_p == "USD" || cur_p == "EUR"  || cur_p == "GBP" || cur_p == "AUD" || cur_p == "CAD" || cur_p == "BRL" || cur_p == "MXN" || cur_p == "SGD" || cur_p == "JPY") {
+            // totalValue = Number(totalValue).toFixed(2);
 
-            totalValue = formatCurrencyDecimalMax(totalValue, selectedCurrency);
+            totalValue = formatCurrencyDecimalMax(totalValue, cur_p);
 
         }
 
+        
         else {
             totalValue = Number(totalValue).toFixed(6);
         }
@@ -704,31 +817,3 @@ function selectcurrency(id) {
 
 }
 
-selectedCurrency = 'USD';
-
-function formatCurrencyDecimalMax(totalValue, selectedCurrency) {
-  if (selectedCurrency == 'BTC') {
-    return Number(totalValue).toFixed(8);
-  }
-  else if (selectedCurrency == 'ETH') {
-    return Number(totalValue).toFixed(7);
-  }
-
-  var formatter = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    currency: selectedCurrency,
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 6,
-  })
-  return formatter.format(Number(totalValue));
-}
-
-function formatCurrencyDecimal(totalValue, selectedCurrency) {
-  var formatter = new Intl.NumberFormat('en-US', {
-    style: 'decimal',
-    currency: selectedCurrency,
-    minimumFractionDigits: 1,
-    maximumFractionDigits: 2
-  })
-  return formatter.format(Number(totalValue));
-}

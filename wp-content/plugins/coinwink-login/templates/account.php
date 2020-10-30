@@ -26,10 +26,15 @@
                     <div style="margin-bottom:2px;">E-mail address:</div>
                     <input type="text" name="email" class="input-general" autocapitalize="off" id="email_address_free" style="padding-left:5px;height:29px;" required>
                     
-                    <div style="height:15px;">&nbsp;</div>
+                    <div style="height:11px;">&nbsp;</div>
+
+                    <div>
+                        
+                        
+                    </div>
                     
                     <p class="signup-submit">
-                        <input type="submit" name="submit" class="button-acc" value="Sign up"  style="padding:2px 4px;"/>
+                        <input type="submit" name="submit" class="button-acc" value="Sign up"  style="margin-top:5px;padding:2px 4px;"/>
                     </p>
 
                     <div style="height:1px;"></div>
@@ -101,22 +106,27 @@
 				<input type="text" name="log" id="user_login" autocapitalize="off" class="input-general" style="padding-left:5px;height:29px;"  required>
 			</p>
 
-			<p class="login-password" style="margin-top:-10px;margin-bottom:18px;">
+			<p class="login-password" style="margin-top:-3px;margin-bottom:18px;">
 				<label for="user_pass">Password: </label><br>
 				<input type="password" name="pwd" id="user_pass" class="input-general" style="font:small-caption;padding-bottom:1px;padding-left:5px;height:29px;letter-spacing: 2px;" required>
 			</p>
 
-            <div class="checkbox-div" style="width:129px;margin:0 auto;padding-left:18px;">
-                <label>
-                    <input type="checkbox" name="rememberme" id="rememberme" checked="checked">
-                    <div class="checkmark" style="margin-top: -1px;margin-left: 0px;"></div>
-                    <div style="padding-left:1px;font-size:11.5px;margin-top:-0.5px;">Remember me</div>
-                </label>
-            </div>
+			<div style="height:10px;"></div>
 
-			<!-- <label><input name="rememberme" type="checkbox" id="rememberme" value="forever" <?php checked( $rememberme ); ?> /> Remember me</label> -->
+			<div class="appify-checkbox" style="width:122px;margin:0 auto;padding-left:4px;">
+				<input id="rememberme" type="checkbox" name="rememberme" class="appify-input-checkbox" checked="checked"/>
+				<label for="rememberme">
+				<div class="checkbox-box" style="margin-top:-1px;">  
+					<svg><use xlink:href="#checkmark" /></svg>
+				</div> 
+				Remember me
+				</label>
+			</div>
+
+			<div style="height:2px;"></div>
+
 			
-			<p class="login-submit" style="margin-top:5px;margin-bottom:17px;">
+			<p class="login-submit" style="margin-bottom:17px;">
 				<input type="submit" name="submit" class="button-acc" value="Log in" style="padding:2px 4px;"/>
             </p>
 
@@ -175,7 +185,10 @@
 
             <div style="height:5px;"></div>
 
-			<p class="lostpassword-submit">
+			
+			
+
+			<p class="lostpassword-submit" style="margin-top:1px;margin-bottom:12px;">
 				<input type="submit" name="submit" class="button-acc" style="width:130px;padding-right:1px!important;" value="Reset password"/>
 			</p>
 		</form>
@@ -213,8 +226,10 @@
 <!-- #changed -->
 <div class="content acc-form" id="changed" style="display:none;">
 
-	<div id="login-form" class="login-form-container">
-		Password successfully changed<br>
+	<div id="login-form" class="login-form-container" style="padding-bottom:6px;">
+        <br>
+		Password successfully changed
+        <br>
 		<br>
 		<a href="#login" class="blacklink hashLink">Login</a>
 	</div>

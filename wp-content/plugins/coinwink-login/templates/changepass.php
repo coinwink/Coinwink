@@ -23,18 +23,18 @@
 				</div>
 			<?php endif; ?>
 
-			<p style="margin-top:30px;">
+			<p style="margin-top:30px;margin-bottom:10px;">
 				<label for="pass1">New password:</label><br>
 				<input type="password" name="pass1" id="pass1" class="input-general" style="font:small-caption;padding-bottom:1px;letter-spacing: 2px;" value="" autocomplete="off" required/>
 			</p>
-			<p style="margin-top:10px;">
+			<p style="margin-top:15px;">
 				<label for="pass2">Repeat the password:</label><br>
 				<input type="password" name="pass2" id="pass2" class="input-general" style="font:small-caption;padding-bottom:1px;letter-spacing: 2px;" value="" autocomplete="off" required/>
 			</p>
 
 			<p class="description" style="margin-top:10px;margin-bottom:10px;">The password should be at least eight characters long.</p>
-			<br>
-			<p class="resetpass-submit">
+
+			<p class="resetpass-submit" style="margin-top:25px;margin-bottom:-4px;">
 				<input type="submit" name="submit" id="resetpass-button"
                 class="button-acc" value="<?php _e( 'Submit', 'personalize-login' ); ?>" 
                 style="margin-top:2px;padding:4px 12px 4px 12px!important;" />

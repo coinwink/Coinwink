@@ -1,16 +1,5 @@
-<?php get_header(); ?>
+<?php
 
-	<main role="main">
-		<!-- section -->
-		<section>
+	include('template-home.php');
 
-			<h1><?php _e( 'Latest Posts', 'html5blank' ); ?></h1>
-
-
-		</section>
-		<!-- /section -->
-	</main>
-
-<?php get_sidebar(); ?>
-
-<?php get_footer(); ?>
+?>

@@ -123,29 +123,13 @@ function processAlertsNew($newAlertsArray) {
 
                                 if ($result) {
                                     if (strtotime($timestamp) - strtotime($result["timestamp"]) > 86400) {
-                                        $alerts_queue[$user["type"]]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                        $alerts_queue[$user["type"]]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"]];
                                     
-                                        // if ($user["type"] == "email") {
-                                        //     $alerts_queue["email"]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
-                                        // }
-                                        // else {
-                                        //     $alerts_queue["sms"]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
-                                        // }
-
-
-                                        // Create db log
-                                        $change_1h_plus = $user["change_1h_plus"];
-                                        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_1h_plus', '$destination', 'sent', '', '$timestamp')";
-                                        $conn->query($sql);
                                     }
                                 }
                                 else {
-                                    $alerts_queue[$user["type"]]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                    $alerts_queue[$user["type"]]['change_1h_plus'][] = [ $coin, $user["change_1h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"]];
                                     
-                                    // Create db log
-                                    $change_1h_plus = $user["change_1h_plus"];
-                                    $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_1h_plus', '$destination', 'sent', '', '$timestamp')";
-                                    $conn->query($sql);
                                 }
                                 
                             }
@@ -164,21 +148,13 @@ function processAlertsNew($newAlertsArray) {
 
                                 if ($result) {
                                     if (strtotime($timestamp) - strtotime($result["timestamp"]) > 86400) {
-                                        $alerts_queue[$user["type"]]['change_1h_minus'][] = [ $coin, $user["change_1h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                        $alerts_queue[$user["type"]]['change_1h_minus'][] = [ $coin, $user["change_1h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"]];
                                     
-                                        // Create db log
-                                        $change_1h_minus = $user["change_1h_minus"];
-                                        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_1h_minus', '$destination', 'sent', '', '$timestamp')";
-                                        $conn->query($sql);
                                     }
                                 }
                                 else {
-                                    $alerts_queue[$user["type"]]['change_1h_minus'][] = [ $coin, $user["change_1h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                    $alerts_queue[$user["type"]]['change_1h_minus'][] = [ $coin, $user["change_1h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"]];
                                     
-                                    // Create db log
-                                    $change_1h_minus = $user["change_1h_minus"];
-                                    $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_1h_minus', '$destination', 'sent', '', '$timestamp')";
-                                    $conn->query($sql);
                                 }
 
                             }
@@ -198,21 +174,13 @@ function processAlertsNew($newAlertsArray) {
 
                                 if ($result) {
                                     if (strtotime($timestamp) - strtotime($result["timestamp"]) > 86400) {
-                                        $alerts_queue[$user["type"]]['change_24h_plus'][] = [ $coin, $user["change_24h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                        $alerts_queue[$user["type"]]['change_24h_plus'][] = [ $coin, $user["change_24h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"] ];
                                     
-                                        // Create db log
-                                        $change_24h_plus = $user["change_24h_plus"];
-                                        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_24h_plus', '$destination', 'sent', '', '$timestamp')";
-                                        $conn->query($sql);
                                     }
                                 }
                                 else {
-                                    $alerts_queue[$user["type"]]['change_24h_plus'][] = [ $coin, $user["change_24h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                    $alerts_queue[$user["type"]]['change_24h_plus'][] = [ $coin, $user["change_24h_plus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"] ];
                                     
-                                    // Create db log
-                                    $change_24h_plus = $user["change_24h_plus"];
-                                    $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_24h_plus', '$destination', 'sent', '', '$timestamp')";
-                                    $conn->query($sql);
                                 }
 
                             }
@@ -232,36 +200,35 @@ function processAlertsNew($newAlertsArray) {
                                 // var_dump($result);
                                 if ($result) {
                                     if (strtotime($timestamp) - strtotime($result["timestamp"]) > 86400) {
-                                        $alerts_queue[$user["type"]]['change_24h_minus'][] = [ $coin, $user["change_24h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                        $alerts_queue[$user["type"]]['change_24h_minus'][] = [ $coin, $user["change_24h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"]];
                                     
-                                        // Create db log
-                                        $change_24h_minus = $user["change_24h_minus"];
-                                        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_24h_minus', '$destination', 'sent', '', '$timestamp')";
-                                        $conn->query($sql);
                                     }
                                 }
                                 else {
-                                    $alerts_queue[$user["type"]]['change_24h_minus'][] = [ $coin, $user["change_24h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"]];
+                                    $alerts_queue[$user["type"]]['change_24h_minus'][] = [ $coin, $user["change_24h_minus"], $user["user_ID"], $user["destination"], $user["type"], $jsoncoin["name"], $jsoncoin["symbol"], $jsoncoin["id"] ];
                                     
-                                    // Create db log
-                                    $change_24h_minus = $user["change_24h_minus"];
-                                    $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, coin, type, destination, status, error, timestamp) VALUES ('$user_ID', '$coin', 'change_24h_minus', '$destination', 'sent', '', '$timestamp')";
-                                    $conn->query($sql);
                                 }
+
                             }
                         }
+
+                    
                         // echo ("\n" . $coin . " 1h: " . $jsoncoin["per_1h"] . " 24h: " . $jsoncoin["per_24h"]);
                     }
                 }
+
             } 
         }
+
     }
+
     if(isset($alerts_queue)) {
         sendAlerts($alerts_queue);
     }
     else {
         echo "no alerts to send";
     }
+    
 }
 
 
@@ -272,6 +239,7 @@ function sendAlerts($alerts_queue) {
 
     // var_dump($alerts_queue);
     echo("\n\n\n");
+
 
     //
     //
@@ -287,10 +255,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend email through function: " . $coin . $user_ID . $destination . $type);
 
-                sendEmail($coin, "change_1h_plus", $change, $destination, $type, $name, $symbol);
+                sendEmail($coin_ID, $coin, "change_1h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -304,10 +273,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend email through function: " . $coin . $user_ID . $destination . $type);
 
-                sendEmail($coin, "change_1h_minus", $change, $destination, $type, $name, $symbol);
+                sendEmail($coin_ID, $coin, "change_1h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -321,10 +291,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend email through function: " . $coin . $user_ID . $destination . $type);
 
-                sendEmail($coin, "change_24h_plus", $change, $destination, $type, $name, $symbol);
+                sendEmail($coin_ID, $coin, "change_24h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -338,10 +309,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend email through function: " . $coin . $user_ID . $destination . $type);
                 
-                sendEmail($coin, "change_24h_minus", $change, $destination, $type, $name, $symbol);
+                sendEmail($coin_ID, $coin, "change_24h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
     }
@@ -361,10 +333,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend sms through function: " . $coin . $user_ID . $destination . $type);
 
-                sendSms($coin, "change_1h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
+                sendSms($coin_ID, $coin, "change_1h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -378,10 +351,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend sms through function: " . $coin . $user_ID . $destination . $type);
 
-                sendSms($coin, "change_1h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
+                sendSms($coin_ID, $coin, "change_1h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -395,10 +369,11 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend sms through function: " . $coin . $user_ID . $destination . $type);
 
-                sendSms($coin, "change_24h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
+                sendSms($coin_ID, $coin, "change_24h_plus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
 
@@ -412,20 +387,23 @@ function sendAlerts($alerts_queue) {
                 $type = $alert[4];
                 $name = $alert[5];
                 $symbol = $alert[6];
+                $coin_ID = $alert[7];
 
                 // echo("\nsend sms through function: " . $coin . $user_ID . $destination . $type);
                 
-                sendSms($coin, "change_24h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
+                sendSms($coin_ID, $coin, "change_24h_minus", $change, $destination, $type, $name, $symbol, $user_ID);
             }
         }
     }
+
+    
 }
 
 
 //
 //
 //
-function sendEmail ($coin, $change_type, $change, $destination, $alert_type, $name, $symbol) {
+function sendEmail ($coin_ID, $coin, $change_type, $change, $destination, $alert_type, $name, $symbol, $user_ID) {
     // echo($coin. $change_type. $change. $destination. $alert_type);
 
     // echo("\nTo: " . $destination . " Subject: New Portfolio Alert " . $coin . " has " . $change_type . " by " . $change . " in " . $change_type . " symbol: " . $symbol . " name: " . $name);
@@ -466,26 +444,46 @@ Coinwink";
         echo 'Message could not be sent. ';
         echo 'Mailer Error: ' . $mail->ErrorInfo . "\r\n";
 
-        // mail($adminaddress,"ERROR: cron_alerts_email_cur", $mail->ErrorInfo . ' Email: ' . $email);
-
         // EMAIL ERROR TO ADMIN
         $GLOBALS['mail']->addAddress($GLOBALS['adminaddress']);
         $GLOBALS['mail']->Subject  = "ERROR: Portfolio alerts - Mail error";
         $GLOBALS['mail']->Body = $mail->ErrorInfo . ' Email: ' . $destination;
         $GLOBALS['mail']->Send();
 
+        // Create db log
+        $content = $name . " (" . $symbol . ")" . " has " . $action . " by " . $change . "% in " . $timeframe . '.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, alert_ID, coin_ID, name, content, coin, symbol, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$content', '$coin', '$symbol', '$change_type', '$destination', 'error', '$mail->ErrorInfo', '$time')";
+        $conn->query($sql);
     }
     else {
         echo "Message has been sent \r\n";
+
+        // Create db log
+        $content = $name . " (" . $symbol . ")" . " has " . $action . " by " . $change . "% in " . $timeframe . '.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, alert_ID, coin_ID, name, content, coin, symbol, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$content', '$coin', '$symbol', '$change_type', '$destination', 'sent', '', '$time')";
+        $conn->query($sql);
     }
+
     $mail->ClearAllRecipients();
+
+
 }
 
 
 //
 //
 //
-function sendSms ($coin, $change_type, $change, $destination, $alert_type, $name, $symbol, $user_ID) {
+function sendSms ($coin_ID, $coin, $change_type, $change, $destination, $alert_type, $name, $symbol, $user_ID) {
     global $conn;
     global $client;
 
@@ -543,6 +541,18 @@ function sendSms ($coin, $change_type, $change, $destination, $alert_type, $name
         $sql = "UPDATE cw_settings SET sms = $sms WHERE user_ID = $user_ID";
         $conn->query($sql);
 
+
+        // Create db log
+        $content = $name . " (" . $symbol . ")" . " has " . $action . " by " . $change . "% in " . $timeframe . '.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, alert_ID, coin_ID, name, symbol, content, coin, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', '$coin', '$change_type', '$destination', 'sent', '', '$time')";
+        $conn->query($sql);
+
+
         // Create db log (extra for sms only)
         $timestamp = date("Y-m-d H:i:s");
         $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, timestamp) VALUES ('$user_ID', 'sms_por', '$dst', '$status', '$timestamp')";
@@ -555,6 +565,16 @@ function sendSms ($coin, $change_type, $change, $destination, $alert_type, $name
     else {
 
         // Create db log
+        $content = $name . " (" . $symbol . ")" . " has " . $action . " by " . $change . "% in " . $timeframe . '.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_portfolio (user_ID, alert_ID, coin_ID, name, symbol, content, coin, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', '$coin', '$change_type', '$destination', 'error', '$mail->ErrorInfo', '$time')";
+        $conn->query($sql);
+
+        // Create db log (extra for sms only)
         $timestamp = date("Y-m-d H:i:s");
         $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, error, timestamp) VALUES ('$user_ID', 'sms_por', '$dst', 'failed', 'No subs or credits', '$timestamp')";
         $conn->query($sql);
@@ -578,9 +598,8 @@ Wink,
 Coinwink";
         $GLOBALS['mail']->Send();
 
-        // @todo-feature: Renew your subscription with the bonus code for 5 usd discount for the first month: 4adsawea65sa4d.
-
         echo ("error: no subscription");
+
     }
 }
 

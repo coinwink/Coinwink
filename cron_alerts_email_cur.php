@@ -20,7 +20,7 @@ include_once "auth_email.php";
 
 
 // Email template and sending
-function sendEmail($unique_id, $email, $coin, $symbol, $currency, $amount, $b_or_a) {
+function sendEmail($unique_id, $email, $coin, $symbol, $currency, $amount, $b_or_a, $coin_ID) {
 
     global $mail;
     global $adminaddress;
@@ -52,16 +52,28 @@ Coinwink';
         $GLOBALS['mail']->Send();
         
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status, error) VALUES ('$unique_id', 'email_cur', '$symbol', '$email', '$timestamp', 'error', '$mail->ErrorInfo')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') is '. $b_or_a .' '. $amount .' '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status, error) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_cur', '$symbol', '$email', '$time', 'error', '$mail->ErrorInfo')";
         $conn->query($sql);
     }
     else {
         echo "Message has been sent \r\n";
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status) VALUES ('$unique_id', 'email_cur', '$symbol', '$email', '$timestamp', 'sent')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') is '. $b_or_a .' '. $amount .' '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_cur', '$symbol', '$email', '$time', 'sent')";
         $conn->query($sql);
     }
 
@@ -101,7 +113,9 @@ function buildAlertsArray() {
         $alerts[$row["coin_id"]][] = $row;
 
     }
+
     processAlerts($alerts, false);
+
 
 }
 buildAlertsArray();
@@ -146,6 +160,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['below_currency'];
                     $mail_queue[$i]->amount = $alert['below'];
                     $mail_queue[$i]->b_or_a = 'below';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
 
                     // Update DB
@@ -173,6 +188,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['below_currency'];
                     $mail_queue[$i]->amount = $alert['below'];
                     $mail_queue[$i]->b_or_a = 'below';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
 
                     // Update DB
@@ -200,6 +216,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['above_currency'];
                     $mail_queue[$i]->amount = $alert['above'];
                     $mail_queue[$i]->b_or_a = 'above';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
 
                     // Update DB
@@ -227,6 +244,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['above_currency'];
                     $mail_queue[$i]->amount = $alert['above'];
                     $mail_queue[$i]->b_or_a = 'above';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
                     
                     // Update DB                
@@ -266,6 +284,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['below_currency'];
                     $mail_queue[$i]->amount = $alert['below'];
                     $mail_queue[$i]->b_or_a = 'below';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
                     
                     // Update DB
@@ -293,6 +312,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue[$i]->currency = $alert['above_currency'];
                     $mail_queue[$i]->amount = $alert['above'];
                     $mail_queue[$i]->b_or_a = 'above';
+                    $mail_queue[$i]->coin_ID = $jsoncoin["id"];
                     $i++;
 
                     // Update DB                
@@ -311,6 +331,20 @@ function processAlerts($alerts, $loop) {
     //             //
     // SECOND PART //
     //             //
+    
+    $sql = "SELECT * FROM cw_data_cur_rates";
+    $result = $conn->query($sql);
+    $result = mysqli_fetch_array($result);
+    // var_dump($result);
+
+    $rate_eur = $result['EUR'];
+    $rate_gbp = $result['GBP'];
+    $rate_cad = $result['CAD'];
+    $rate_aud = $result['AUD'];
+    $rate_brl = $result['BRL'];
+    $rate_mxn = $result['MXN'];
+    $rate_jpy = $result['JPY'];
+    $rate_sgd = $result['SGD'];
 
 
     // PROCESS EUR
@@ -320,10 +354,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW EUR
+                $price = $jsoncoin['price_usd'] * $rate_eur;
 
+                // BELOW EUR
                 if ($alert['below_currency'] == 'EUR') {
-                    if ($jsoncoin['price_eur'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW EUR \r\n");
@@ -337,6 +372,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -348,9 +384,8 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE EUR
-
                 if ($alert['above_currency'] == 'EUR') {
-                    if ($jsoncoin['price_eur'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE EUR\r\n");
@@ -364,6 +399,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -385,10 +421,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW GBP
+                $price = $jsoncoin['price_usd'] * $rate_gbp;
 
+                // BELOW GBP
                 if ($alert['below_currency'] == 'GBP') {
-                    if ($jsoncoin['price_gbp'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW GBP \r\n");
@@ -402,6 +439,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -413,9 +451,8 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE GBP
-
                 if ($alert['above_currency'] == 'GBP') {
-                    if ($jsoncoin['price_gbp'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE GBP\r\n");
@@ -429,6 +466,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -450,11 +488,11 @@ function processAlerts($alerts, $loop) {
 
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW AUD
+                $price = $jsoncoin['price_usd'] * $rate_aud;
 
+                // BELOW AUD
                 if ($alert['below_currency'] == 'AUD') {
-                
-                    if ($jsoncoin['price_aud'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
                 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW AUD \r\n");
@@ -468,6 +506,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -481,7 +520,7 @@ function processAlerts($alerts, $loop) {
                 // ABOVE AUD
 
                 if ($alert['above_currency'] == 'AUD') {
-                    if ($jsoncoin['price_aud'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE AUD\r\n");
@@ -495,6 +534,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -516,10 +556,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW CAD
+                $price = $jsoncoin['price_usd'] * $rate_cad;
 
+                // BELOW CAD
                 if ($alert['below_currency'] == 'CAD') {
-                    if ($jsoncoin['price_cad'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW CAD \r\n");
@@ -533,6 +574,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -546,7 +588,7 @@ function processAlerts($alerts, $loop) {
                 // ABOVE CAD
 
                 if ($alert['above_currency'] == 'CAD') {
-                    if ($jsoncoin['price_cad'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE CAD\r\n");
@@ -560,6 +602,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -574,6 +617,10 @@ function processAlerts($alerts, $loop) {
     }
     
 
+
+
+
+
     // PROCESS BRL
     foreach ($dataCMC as $jsoncoin) {
 
@@ -581,10 +628,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW BRL
+                $price = $jsoncoin['price_usd'] * $rate_brl;
 
+                // BELOW BRL
                 if ($alert['below_currency'] == 'BRL') {
-                    if ($jsoncoin['price_brl'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW BRL \r\n");
@@ -598,6 +646,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -611,7 +660,7 @@ function processAlerts($alerts, $loop) {
                 // ABOVE BRL
 
                 if ($alert['above_currency'] == 'BRL') {
-                    if ($jsoncoin['price_brl'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE BRL\r\n");
@@ -625,6 +674,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -646,10 +696,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW MXN
+                $price = $jsoncoin['price_usd'] * $rate_mxn;
 
+                // BELOW MXN
                 if ($alert['below_currency'] == 'MXN') {
-                    if ($jsoncoin['price_mxn'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW MXN \r\n");
@@ -663,6 +714,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -674,9 +726,8 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE MXN
-
                 if ($alert['above_currency'] == 'MXN') {
-                    if ($jsoncoin['price_mxn'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE MXN\r\n");
@@ -690,6 +741,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -711,11 +763,12 @@ function processAlerts($alerts, $loop) {
 
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW JPY
+                $price = $jsoncoin['price_usd'] * $rate_jpy;
 
+                // BELOW JPY
                 if ($alert['below_currency'] == 'JPY') {
                 
-                    if ($jsoncoin['price_jpy'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
                 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW JPY \r\n");
@@ -729,6 +782,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -740,9 +794,8 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE JPY
-
                 if ($alert['above_currency'] == 'JPY') {
-                    if ($jsoncoin['price_jpy'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE JPY\r\n");
@@ -756,6 +809,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -777,10 +831,11 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
-                // BELOW SGD
+                $price = $jsoncoin['price_usd'] * $rate_sgd;
 
+                // BELOW SGD
                 if ($alert['below_currency'] == 'SGD') {
-                    if ($jsoncoin['price_sgd'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " BELOW SGD \r\n");
@@ -794,6 +849,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['below_currency'];
                     $mail_queue2[$i2]->amount = $alert['below'];
                     $mail_queue2[$i2]->b_or_a = 'below';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -805,9 +861,8 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE SGD
-
                 if ($alert['above_currency'] == 'SGD') {
-                    if ($jsoncoin['price_sgd'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])){ 
 
                     // Echo
                     echo($alert['ID'] . " " . $alert['coin'] . " ABOVE SGD\r\n");
@@ -821,6 +876,7 @@ function processAlerts($alerts, $loop) {
                     $mail_queue2[$i2]->currency = $alert['above_currency'];
                     $mail_queue2[$i2]->amount = $alert['above'];
                     $mail_queue2[$i2]->b_or_a = 'above';
+                    $mail_queue2[$i2]->coin_ID = $jsoncoin["id"];
                     $i2++;
 
                     // Update DB
@@ -849,7 +905,7 @@ function processAlerts($alerts, $loop) {
 if (isset($mail_queue)) {
     foreach ($mail_queue as $alert) {
         $alert = json_decode(json_encode($alert),true);
-        sendEmail($alert['unique_id'], $alert['email'], $alert['coin'], $alert['symbol'], $alert['currency'], $alert['amount'], $alert['b_or_a']);
+        sendEmail($alert['unique_id'], $alert['email'], $alert['coin'], $alert['symbol'], $alert['currency'], $alert['amount'], $alert['b_or_a'], $alert['coin_ID']);
     }
 }
 unset($mail_queue);
@@ -859,7 +915,7 @@ unset($mail_queue);
 if (isset($mail_queue2)) {
     foreach ($mail_queue2 as $alert) {
         $alert = json_decode(json_encode($alert),true);
-        sendEmail($alert['unique_id'], $alert['email'], $alert['coin'], $alert['symbol'], $alert['currency'], $alert['amount'], $alert['b_or_a']);
+        sendEmail($alert['unique_id'], $alert['email'], $alert['coin'], $alert['symbol'], $alert['currency'], $alert['amount'], $alert['b_or_a'], $alert['coin_ID']);
     }
 }
 unset($mail_queue2);

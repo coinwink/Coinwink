@@ -19,9 +19,8 @@ include_once "auth_email.php";
 
 
 
-
 // Email template and sending
-function sendEmail($unique_id, $email, $coin, $symbol, $currency, $change, $i_or_d) {
+function sendEmail($unique_id, $email, $coin, $symbol, $currency, $change, $i_or_d, $coin_ID) {
 
     global $adminaddress;
     global $mail;
@@ -53,16 +52,28 @@ Coinwink';
         $GLOBALS['mail']->Send();
         
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status, error) VALUES ('$unique_id', 'email_per', '$symbol', '$email', '$timestamp', 'error', '$mail->ErrorInfo')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') price '. $i_or_d .' by '. $change .'% compared to '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status, error) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_per', '$symbol', '$email', '$time', 'error', '$mail->ErrorInfo')";
         $conn->query($sql);
     }
     else {
         echo "Message has been sent \r\n";
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status) VALUES ('$unique_id', 'email_per', '$symbol', '$email', '$timestamp', 'sent')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') price '. $i_or_d .' by '. $change .'% compared to '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_per', '$symbol', '$email', '$time', 'sent')";
         $conn->query($sql);
     }
 
@@ -72,7 +83,7 @@ Coinwink';
 
 
 // Email template and sending 1h. & 24h.
-function sendEmail2($unique_id, $email, $coin, $symbol, $currency, $change, $i_or_d, $period) {
+function sendEmail2($unique_id, $email, $coin, $symbol, $currency, $change, $i_or_d, $period, $coin_ID) {
 
     global $adminaddress;
     global $mail;
@@ -95,8 +106,6 @@ Coinwink';
         echo 'Message could not be sent. ';
         echo 'Mailer Error: ' . $mail->ErrorInfo . "\r\n";
 
-        // mail($adminaddress,"ERROR: cron_alerts_email_cur", $mail->ErrorInfo . ' Email: ' . $email);
-
         // EMAIL ERROR TO ADMIN
         $GLOBALS['mail']->addAddress($GLOBALS['adminaddress']);
         $GLOBALS['mail']->Subject  = "ERROR: cron_alerts_email_per Nr.2";
@@ -104,16 +113,28 @@ Coinwink';
         $GLOBALS['mail']->Send();
         
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status, error) VALUES ('$unique_id', 'email_per', '$symbol', '$email', '$timestamp', 'error', '$mail->ErrorInfo')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') price '. $i_or_d .' by '. $change .'% in '. $period .' period, compared to '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status, error) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_per', '$symbol', '$email', '$time', 'error', '$mail->ErrorInfo')";
         $conn->query($sql);
     }
     else {
         echo "Message has been sent \r\n";
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, type, symbol, destination, timestamp, status) VALUES ('$unique_id', 'email_per', '$symbol', '$email', '$timestamp', 'sent')";
+        $content = ''. ucfirst($coin) .' ('. ucfirst($symbol) .') price '. $i_or_d .' by '. $change .'% in '. $period .' period, compared to '. $currency .'.';
+
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+
+        $name = ucfirst($coin);
+        $time = time();
+
+        $sql = "INSERT INTO cw_logs_alerts_email (user_ID, alert_ID, coin_ID, name, content, type, symbol, destination, time, status) VALUES ('$unique_id', '$alert_ID', '$coin_ID', '$name', '$content', 'email_per', '$symbol', '$email', '$time', 'sent')";
         $conn->query($sql);
     }
 
@@ -193,7 +214,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to btc email sent \r\n");
                     
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'BTC', $row['plus_percent'], 'increased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'BTC', $row['plus_percent'], 'increased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -215,7 +236,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to btc email sent \r\n");
 
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'BTC', $row['minus_percent'], 'decreased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'BTC', $row['minus_percent'], 'decreased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -237,7 +258,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to usd email sent \r\n");
 
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -259,7 +280,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to usd email sent \r\n");
 
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -281,7 +302,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent from_now compared to eth email sent \r\n");
 
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'ETH', $row['plus_percent'], 'increased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'ETH', $row['plus_percent'], 'increased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -303,7 +324,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent from_now compared to eth email sent \r\n");
 
                         // Email
-                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'ETH', $row['minus_percent'], 'decreased');
+                        sendEmail($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'ETH', $row['minus_percent'], 'decreased', $row['ID']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -331,7 +352,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent 1h compared to usd email sent \r\n");
                         
                         // Email
-                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', '1h.');
+                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', '1h.', $row['coin_id']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -353,7 +374,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent 1h compared to usd email sent \r\n");
                         
                         // Email
-                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', '1h.');
+                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', '1h.', $row['coin_id']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -381,7 +402,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " plus_percent 24h compared to usd email sent \r\n");
                         
                         // Email
-                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', '24h.');
+                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['plus_percent'], 'increased', '24h.', $row['coin_id']);
 
                         // Update DB
                         $ID = $row['ID'];
@@ -403,7 +424,7 @@ function processAlerts($alerts) {
                         echo($row['ID'] . " " . $row['coin'] . " minus_percent 24h compared to usd email sent \r\n");
                         
                         // Email
-                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', '24h.');
+                        sendEmail2($row['unique_id'], $row['email'], $row['coin'], $row['symbol'], 'USD', $row['minus_percent'], 'decreased', '24h.', $row['coin_id']);
 
                         // Update DB
                         $ID = $row['ID'];

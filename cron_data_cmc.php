@@ -9,25 +9,10 @@ include_once "auth_email.php";
 include_once "auth_cmc.php";
 
 
-// Get currency conversion rates
-$sql = "SELECT * FROM cw_data_cur_rates";
-$result = $conn->query($sql);
-foreach ($result as $rate) {
-    $EUR = $rate["EUR"];
-    $GBP = $rate["GBP"];
-    $CAD = $rate["CAD"];
-    $AUD = $rate["AUD"];
-    $BRL = $rate["BRL"];
-    $MXN = $rate["MXN"];
-    $JPY = $rate["JPY"];
-    $SGD = $rate["SGD"];
-}
-
-
 // GET CMC DATA
 $ch = curl_init();
 
-curl_setopt($ch, CURLOPT_URL, "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?sort=market_cap&start=1&limit=2600&convert=USD"); 
+curl_setopt($ch, CURLOPT_URL, "https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?sort=market_cap&start=1&limit=3600&convert=USD"); 
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_ENCODING, "");
 curl_setopt($ch, CURLOPT_MAXREDIRS, 10);
@@ -93,15 +78,15 @@ else {
     }
 
     // Remove unnecessary data to save space & update with additional data
-    function unsetSomeProperties($dataArray, $BTC, $ETH, $EUR, $GBP, $AUD, $CAD, $BRL, $MXN, $JPY, $SGD) {
-
+    function unsetSomeProperties($dataArray, $BTC, $ETH) {
         foreach ($dataArray as &$jsoncoin) {
+            
             unset($jsoncoin["cmc_rank"]);
+            unset($jsoncoin["date_added"]);
             unset($jsoncoin["circulating_supply"]);
             unset($jsoncoin["total_supply"]);
             unset($jsoncoin["last_updated"]);
             unset($jsoncoin["max_supply"]);
-            unset($jsoncoin["date_added"]);
             unset($jsoncoin["num_market_pairs"]);
             unset($jsoncoin["tags"]);
             unset($jsoncoin["platform"]);
@@ -113,27 +98,24 @@ else {
 
             if ($jsoncoin["name"] == "Ethereum") { $jsoncoin["price_eth"] = 1; }
             else { $jsoncoin["price_eth"] = $jsoncoin["quote"]["USD"]["price"] * $ETH; }
-
-            $jsoncoin["price_eur"] = $jsoncoin["quote"]["USD"]["price"] * $EUR;
-            $jsoncoin["price_gbp"] = $jsoncoin["quote"]["USD"]["price"] * $GBP;
-            $jsoncoin["price_aud"] = $jsoncoin["quote"]["USD"]["price"] * $AUD;
-            $jsoncoin["price_cad"] = $jsoncoin["quote"]["USD"]["price"] * $CAD;
-
-            $jsoncoin["price_brl"] = $jsoncoin["quote"]["USD"]["price"] * $BRL;
-            $jsoncoin["price_mxn"] = $jsoncoin["quote"]["USD"]["price"] * $MXN;
-            $jsoncoin["price_jpy"] = $jsoncoin["quote"]["USD"]["price"] * $JPY;
-            $jsoncoin["price_sgd"] = $jsoncoin["quote"]["USD"]["price"] * $SGD;
+            
+            $jsoncoin["text"] = $jsoncoin["name"] . ' (' . $jsoncoin["symbol"] . ')';
 
             $jsoncoin["per_1h"] = $jsoncoin["quote"]["USD"]["percent_change_1h"];
             $jsoncoin["per_24h"] = $jsoncoin["quote"]["USD"]["percent_change_24h"];
-            $jsoncoin["text"] = $jsoncoin["name"] . ' (' . $jsoncoin["symbol"] . ')';
-            
+            $jsoncoin["per_7d"] = $jsoncoin["quote"]["USD"]["percent_change_7d"];
+
+            $jsoncoin["vol"] = $jsoncoin["quote"]["USD"]["volume_24h"];
+
+            $jsoncoin["cap"] = $jsoncoin["quote"]["USD"]["market_cap"];
+
+
             unset($jsoncoin["quote"]);
         }
         return ($dataArray);
     }
     
-    $dataArray = unsetSomeProperties($dataArray, $BTC, $ETH, $EUR, $GBP, $AUD, $CAD, $BRL, $MXN, $JPY, $SGD);
+    $dataArray = unsetSomeProperties($dataArray, $BTC, $ETH);
 
     // Serialize and update db
     $outputserialized = serialize($dataArray);

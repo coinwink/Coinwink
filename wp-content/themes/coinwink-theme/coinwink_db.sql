@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 4.7.4
+-- version 4.9.2
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Feb 16, 2020 at 03:12 PM
--- Server version: 5.7.19
--- PHP Version: 7.1.9
+-- Generation Time: Oct 09, 2020 at 02:27 PM
+-- Server version: 10.4.10-MariaDB
+-- PHP Version: 7.3.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `coinwink-2020`
+-- Database: `coinwink_git`
 --
 
 -- --------------------------------------------------------
@@ -31,20 +31,20 @@ SET time_zone = "+00:00";
 DROP TABLE IF EXISTS `cw_alerts_email_cur`;
 CREATE TABLE IF NOT EXISTS `cw_alerts_email_cur` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `coin` text NOT NULL,
-  `coin_id` text NOT NULL,
-  `symbol` text NOT NULL,
-  `below` text NOT NULL,
-  `below_currency` text NOT NULL,
-  `above` text NOT NULL,
-  `above_currency` text NOT NULL,
-  `below_sent` text NOT NULL,
-  `above_sent` text NOT NULL,
-  `email` text NOT NULL,
-  `unique_id` text NOT NULL,
+  `coin` varchar(300) NOT NULL,
+  `coin_id` varchar(64) NOT NULL,
+  `symbol` varchar(64) NOT NULL,
+  `below` varchar(64) NOT NULL,
+  `below_currency` varchar(64) NOT NULL,
+  `above` varchar(64) NOT NULL,
+  `above_currency` varchar(64) NOT NULL,
+  `below_sent` varchar(32) NOT NULL,
+  `above_sent` varchar(32) NOT NULL,
+  `email` varchar(300) NOT NULL,
+  `unique_id` varchar(64) NOT NULL,
   `timestamp` varchar(64) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=285101 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -56,7 +56,7 @@ DROP TABLE IF EXISTS `cw_alerts_email_per`;
 CREATE TABLE IF NOT EXISTS `cw_alerts_email_per` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `coin` varchar(300) NOT NULL,
-  `coin_id` text NOT NULL,
+  `coin_id` varchar(32) NOT NULL,
   `symbol` varchar(64) NOT NULL,
   `price_set_btc` varchar(64) NOT NULL,
   `price_set_usd` varchar(64) NOT NULL,
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS `cw_alerts_email_per` (
   `unique_id` varchar(64) NOT NULL,
   `timestamp` varchar(64) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=7491 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -98,7 +98,7 @@ CREATE TABLE IF NOT EXISTS `cw_alerts_portfolio` (
   `timestamp` datetime NOT NULL,
   `expanded` int(11) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=249 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -123,7 +123,7 @@ CREATE TABLE IF NOT EXISTS `cw_alerts_sms_cur` (
   `unique_id` varchar(100) NOT NULL,
   `timestamp` varchar(64) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=14951 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -152,7 +152,7 @@ CREATE TABLE IF NOT EXISTS `cw_alerts_sms_per` (
   `user_ID` int(11) NOT NULL,
   `timestamp` datetime NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=111 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -165,14 +165,11 @@ CREATE TABLE IF NOT EXISTS `cw_data_cmc` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `json` mediumtext NOT NULL,
   UNIQUE KEY `ID` (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
-
---
--- Dumping data for table `cw_data_cmc`
---
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 INSERT INTO `cw_data_cmc` (`ID`, `json`) VALUES
 (1, '');
+COMMIT;
 
 -- --------------------------------------------------------
 
@@ -194,12 +191,20 @@ CREATE TABLE IF NOT EXISTS `cw_data_cur_rates` (
   UNIQUE KEY `ID` (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+-- --------------------------------------------------------
+
 --
--- Dumping data for table `cw_data_cur_rates`
+-- Table structure for table `cw_feedback`
 --
 
-INSERT INTO `cw_data_cur_rates` (`ID`, `EUR`, `GBP`, `CAD`, `AUD`, `BRL`, `MXN`, `JPY`, `SGD`) VALUES
-(1, '0.896702', '0.767803', '1.30455', '1.448501', '4.174399', '18.809995', '109.998504', '1.34624');
+DROP TABLE IF EXISTS `cw_feedback`;
+CREATE TABLE IF NOT EXISTS `cw_feedback` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL,
+  `message` varchar(10000) NOT NULL,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -210,15 +215,20 @@ INSERT INTO `cw_data_cur_rates` (`ID`, `EUR`, `GBP`, `CAD`, `AUD`, `BRL`, `MXN`,
 DROP TABLE IF EXISTS `cw_logs_alerts_email`;
 CREATE TABLE IF NOT EXISTS `cw_logs_alerts_email` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `user_ID` tinytext,
+  `user_ID` tinytext DEFAULT NULL,
+  `alert_ID` varchar(64) NOT NULL,
+  `coin_ID` int(11) NOT NULL,
+  `name` varchar(64) NOT NULL,
   `symbol` tinytext NOT NULL,
-  `type` tinytext,
-  `destination` tinytext,
-  `status` tinytext,
+  `type` tinytext DEFAULT NULL,
+  `destination` tinytext DEFAULT NULL,
+  `status` tinytext DEFAULT NULL,
   `error` varchar(1280) DEFAULT 'NULL',
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp(),
+  `time` int(11) NOT NULL,
+  `content` varchar(9999) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=61955 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -230,14 +240,20 @@ DROP TABLE IF EXISTS `cw_logs_alerts_portfolio`;
 CREATE TABLE IF NOT EXISTS `cw_logs_alerts_portfolio` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `user_ID` int(11) DEFAULT NULL,
+  `alert_ID` varchar(64) NOT NULL,
+  `coin_ID` int(11) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `symbol` tinytext NOT NULL,
   `coin` tinytext NOT NULL,
-  `type` tinytext,
-  `destination` tinytext,
-  `status` tinytext,
+  `type` tinytext DEFAULT NULL,
+  `destination` tinytext DEFAULT NULL,
+  `status` tinytext DEFAULT NULL,
   `error` varchar(1280) DEFAULT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `time` int(11) NOT NULL,
+  `content` varchar(9999) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=3185 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -249,13 +265,19 @@ DROP TABLE IF EXISTS `cw_logs_alerts_sms`;
 CREATE TABLE IF NOT EXISTS `cw_logs_alerts_sms` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
   `user_ID` int(11) DEFAULT NULL,
-  `type` tinytext,
-  `destination` tinytext,
-  `status` tinytext,
+  `alert_ID` varchar(64) NOT NULL,
+  `coin_ID` int(11) NOT NULL,
+  `name` varchar(64) NOT NULL,
+  `symbol` tinytext NOT NULL,
+  `type` tinytext DEFAULT NULL,
+  `destination` tinytext DEFAULT NULL,
+  `status` tinytext DEFAULT NULL,
   `error` varchar(1280) DEFAULT NULL,
-  `timestamp` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `timestamp` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  `time` int(11) NOT NULL,
+  `content` varchar(9999) NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=2819 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -266,17 +288,24 @@ CREATE TABLE IF NOT EXISTS `cw_logs_alerts_sms` (
 DROP TABLE IF EXISTS `cw_settings`;
 CREATE TABLE IF NOT EXISTS `cw_settings` (
   `user_ID` smallint(10) NOT NULL AUTO_INCREMENT,
-  `subs` tinyint(4) NOT NULL DEFAULT '0',
-  `sms` tinyint(4) NOT NULL DEFAULT '0',
-  `legac` tinyint(4) NOT NULL DEFAULT '0',
+  `subs` tinyint(4) NOT NULL DEFAULT 0,
+  `sms` tinyint(4) NOT NULL DEFAULT 0,
+  `legac` tinyint(4) NOT NULL DEFAULT 0,
+  `theme` varchar(32) NOT NULL,
+  `t_s` tinyint(1) NOT NULL,
+  `t_i` varchar(4) NOT NULL,
   `last_login` datetime DEFAULT NULL,
   `unique_id` varchar(100) NOT NULL,
   `email` varchar(100) NOT NULL,
   `phone_nr` varchar(100) NOT NULL,
+  `cur_main` varchar(10) NOT NULL,
+  `cur_p` varchar(10) NOT NULL,
+  `cur_w` varchar(10) NOT NULL,
+  `conf_w` varchar(10) NOT NULL,
   `portfolio` text NOT NULL,
   `watchlist` text NOT NULL,
   PRIMARY KEY (`user_ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=26181 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
 
@@ -292,14 +321,14 @@ CREATE TABLE IF NOT EXISTS `cw_subs` (
   `date_end` datetime NOT NULL,
   `date_renewed` date NOT NULL,
   `status` varchar(64) NOT NULL,
-  `months` int(11) NOT NULL DEFAULT '1',
+  `months` int(11) NOT NULL DEFAULT 1,
   `payment_ID` varchar(64) NOT NULL,
   `country` tinytext NOT NULL,
   `subscription` varchar(64) NOT NULL,
   `customer` varchar(64) NOT NULL,
   `date_cancelled` datetime NOT NULL,
   PRIMARY KEY (`ID`)
-) ENGINE=MyISAM AUTO_INCREMENT=107 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

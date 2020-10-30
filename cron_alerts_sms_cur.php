@@ -1,6 +1,4 @@
 <?php
-// // Delay this script 30 sec to allow cmc_data script to complete first
-// sleep(25);
 
 // Check execution time - Start time
 $time_start = microtime(true);
@@ -30,7 +28,7 @@ $client = new Client($account_sid, $auth_token);
 
 
 // SMS template and sending
-function sendSMS($user_ID, $phone, $coin, $symbol, $amount, $currency, $b_or_a) {
+function sendSMS($coin_ID, $user_ID, $phone, $coin, $symbol, $amount, $currency, $b_or_a) {
 
     global $conn;
     global $client;
@@ -56,14 +54,10 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $amount, $currency, $b_or_a) 
         // Twilio paid
         try {
             $messages = $client->messages->create($dst, array( 
-                'From' => "+16506677888",  
+                'From' => "+16506677900",  
                 'Body' => $text,      
             ));
         } catch (Exception $e) {
-            // var_dump($e);
-            // echo ($e->getStatusCode()); //400
-            // echo ($e->getMessage());
-            // mail($GLOBALS['adminaddress'],"Coinwink SMS error","Catched exception: " . $e->getMessage());
             
             echo ("Error\n");
 
@@ -83,8 +77,11 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $amount, $currency, $b_or_a) 
         $conn->query($sql);
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, timestamp) VALUES ('$user_ID', 'sms_cur', '$dst', '$status', '$timestamp')";
+        $content = ucfirst($coin) .' ('. ucfirst($symbol) .') is '. $b_or_a .' '. $amount .' '. $currency .'.';
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        $name = ucfirst($coin);
+        $time = time();
+        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, alert_ID, coin_ID, name, symbol, content, type, destination, status, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', 'sms_cur', '$dst', '$status', '$time')";
         $conn->query($sql);
     }
 
@@ -92,8 +89,11 @@ function sendSMS($user_ID, $phone, $coin, $symbol, $amount, $currency, $b_or_a) 
     else {
 
         // Create db log
-        $timestamp = date("Y-m-d H:i:s");
-        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, type, destination, status, error, timestamp) VALUES ('$user_ID', 'sms_cur', '$dst', 'failed', 'No subs or credits', '$timestamp')";
+        $content = ucfirst($coin) .' ('. ucfirst($symbol) .') is '. $b_or_a .' '. $amount .' '. $currency .'.';
+        $alert_ID = time() . '' . join('', array_map(function($value) { return $value == 1 ? mt_rand(1, 9) : mt_rand(0, 9); }, range(1, 6)));
+        $name = ucfirst($coin);
+        $time = time();
+        $sql = "INSERT INTO cw_logs_alerts_sms (user_ID, alert_ID, coin_ID, name, symbol, content, type, destination, status, error, time) VALUES ('$user_ID', '$alert_ID', '$coin_ID', '$name', '$symbol', '$content', 'sms_cur', '$dst', 'failed', 'No subs or credits', '$time')";
         $conn->query($sql);
         
         // get the user email address
@@ -115,8 +115,6 @@ Regards,
 Coinwink";
         $GLOBALS['mail']->Send();
         $GLOBALS['mail']->ClearAllRecipients();
-
-        // @todo-feature: Renew your subscription with the bonus code for 5 usd discount for the first month: 4adsawea65sa4d.
 
     }
 }
@@ -185,7 +183,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "BTC below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -204,7 +202,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "USD BELOW SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -223,7 +221,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "ETH below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -242,7 +240,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "USD ABOVE SMS sent \r\n");  
                     
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -261,7 +259,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "BTC ABOVE SMS sent \r\n");  
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -281,7 +279,7 @@ function processAlerts($alerts, $loop) {
                         echo($alert['ID'] . $alert['coin'] . "ETH ABOVE SMS sent \r\n");  
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -303,6 +301,20 @@ function processAlerts($alerts, $loop) {
     // SECOND PART //
     //             //
 
+    $sql = "SELECT * FROM cw_data_cur_rates";
+    $result = $conn->query($sql);
+    $result = mysqli_fetch_array($result);
+    // var_dump($result);
+
+    $rate_eur = $result['EUR'];
+    $rate_gbp = $result['GBP'];
+    $rate_cad = $result['CAD'];
+    $rate_aud = $result['AUD'];
+    $rate_brl = $result['BRL'];
+    $rate_mxn = $result['MXN'];
+    $rate_jpy = $result['JPY'];
+    $rate_sgd = $result['SGD'];
+
 
     // PROCESS EUR
     foreach ($dataCMC as $jsoncoin) {
@@ -311,16 +323,18 @@ function processAlerts($alerts, $loop) {
             
             foreach ($alerts[$jsoncoin["id"]] as $alert) {
 
+                
+                $price = $jsoncoin['price_usd'] * $rate_eur;
+
                 // BELOW EUR
-
                 if ($alert['below_currency'] == 'EUR') {
-
-                    if ($jsoncoin['price_eur'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "EUR below SMS sent \r\n");
                             
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -331,15 +345,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE EUR
-
                 if ($alert['above_currency'] == 'EUR') {
 
-                    if ($jsoncoin['price_eur'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "EUR ABOVE SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -349,16 +362,17 @@ function processAlerts($alerts, $loop) {
                     }
                 }
 
+
+                $price = $jsoncoin['price_usd'] * $rate_gbp;
             
                 // BELOW GBP
-
                 if ($alert['below_currency'] == 'GBP') {
-                    if ($jsoncoin['price_gbp'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
                 
                         echo($alert['ID'] . $alert['coin'] . "GBP below SMS sent \r\n");                    
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -368,14 +382,13 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE GBP
-
                 if ($alert['above_currency'] == 'GBP') {
-                    if ($jsoncoin['price_gbp'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "GBP ABOVE SMS sent \r\n");
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -386,16 +399,17 @@ function processAlerts($alerts, $loop) {
                 }
 
 
-                // BELOW AUD
+                $price = $jsoncoin['price_usd'] * $rate_aud;
 
+                // BELOW AUD
                 if ($alert['below_currency'] == 'AUD') {
 
-                    if ($jsoncoin['price_aud'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "AUD below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -406,15 +420,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE AUD
-
                 if ($alert['above_currency'] == 'AUD') {
 
-                    if ($jsoncoin['price_aud'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "AUD ABOVE SMS sent \r\n");  
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -425,16 +438,17 @@ function processAlerts($alerts, $loop) {
                 }
 
 
-                // BELOW CAD
+                $price = $jsoncoin['price_usd'] * $rate_cad;
 
+                // BELOW CAD
                 if ($alert['below_currency'] == 'CAD') {
 
-                    if ($jsoncoin['price_cad'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
 
                         echo($alert['ID'] . $alert['coin'] . "CAD below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -445,15 +459,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE CAD
-
                 if ($alert['above_currency'] == 'CAD') {
                     
-                    if ($jsoncoin['price_cad'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "CAD ABOVE SMS sent \r\n"); 
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -466,18 +479,17 @@ function processAlerts($alerts, $loop) {
 
 
 
-
+                $price = $jsoncoin['price_usd'] * $rate_brl;
                 
                 // BELOW BRL
-
                 if ($alert['below_currency'] == 'BRL') {
 
-                    if ($jsoncoin['price_brl'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "BRL below SMS sent \r\n");
                             
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -488,15 +500,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE BRL
-
                 if ($alert['above_currency'] == 'BRL') {
 
-                    if ($jsoncoin['price_brl'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "BRL ABOVE SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -506,16 +517,17 @@ function processAlerts($alerts, $loop) {
                     }
                 }
 
-            
-                // BELOW MXN
 
+                $price = $jsoncoin['price_usd'] * $rate_mxn;
+
+                // BELOW MXN
                 if ($alert['below_currency'] == 'MXN') {
-                    if ($jsoncoin['price_mxn'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])){ 
                 
                         echo($alert['ID'] . $alert['coin'] . "MXN below SMS sent \r\n");                    
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -525,14 +537,13 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE MXN
-
                 if ($alert['above_currency'] == 'MXN') {
-                    if ($jsoncoin['price_mxn'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "MXN ABOVE SMS sent \r\n");
                         
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -543,16 +554,17 @@ function processAlerts($alerts, $loop) {
                 }
 
 
-                // BELOW JPY
+                $price = $jsoncoin['price_usd'] * $rate_jpy;
 
+                // BELOW JPY
                 if ($alert['below_currency'] == 'JPY') {
 
-                    if ($jsoncoin['price_jpy'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "JPY below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
                         
                         // Update DB
                         $ID = $alert['ID'];
@@ -563,15 +575,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE JPY
-
                 if ($alert['above_currency'] == 'JPY') {
 
-                    if ($jsoncoin['price_jpy'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "JPY ABOVE SMS sent \r\n");  
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -582,16 +593,17 @@ function processAlerts($alerts, $loop) {
                 }
 
 
-                // BELOW SGD
+                $price = $jsoncoin['price_usd'] * $rate_sgd;
 
+                // BELOW SGD
                 if ($alert['below_currency'] == 'SGD') {
 
-                    if ($jsoncoin['price_sgd'] < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
+                    if ($price < $alert['below'] && !$alert['below_sent'] && is_numeric($alert['below'])) { 
 
                         echo($alert['ID'] . $alert['coin'] . "SGD below SMS sent \r\n");
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['below'], $alert['below_currency'], 'below');
 
                         // Update DB
                         $ID = $alert['ID'];
@@ -602,15 +614,14 @@ function processAlerts($alerts, $loop) {
                 }
 
                 // ABOVE SGD
-
                 if ($alert['above_currency'] == 'SGD') {
                     
-                    if ($jsoncoin['price_sgd'] > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
+                    if ($price > $alert['above'] && !$alert['above_sent'] && is_numeric($alert['above'])) { 
                 
                         echo($alert['ID'] . $alert['coin'] . "SGD ABOVE SMS sent \r\n"); 
 
                         // Send SMS alerts
-                        sendSMS($alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
+                        sendSMS($jsoncoin['id'], $alert['user_ID'], $alert['phone'], $alert['coin'], $alert['symbol'], $alert['above'], $alert['above_currency'], 'above');
 
                         // Update DB
                         $ID = $alert['ID'];

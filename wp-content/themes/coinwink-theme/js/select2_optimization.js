@@ -109,7 +109,7 @@ if (urlSymbol.length > 32){
 else if (urlSymbol == "?ref=producthunt") {
 	initialValue = "1";
 }
-else if (urlSymbol == "portfolio" || urlSymbol == "sms") {
+else if (urlSymbol == "portfolio" || urlSymbol == "sms" || urlSymbol == "es") {
   initialValue = "1";
   // jQuery('.container').hide();
   // jQuery('#portfolio').show();

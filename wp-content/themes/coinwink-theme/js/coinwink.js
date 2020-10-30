@@ -4,90 +4,111 @@ var switchLocation = "email";
 // navigation
 var router = new Navigo(homePath);
 
-function reloadPortfolio() {
-  jQuery("#portfolio_empty").hide();
-  jQuery("#portfolio-message").hide();
-  if (router.lastRouteResolved().url == "/portfolio" || router.lastRouteResolved().url == "/portfolio/") {
-    selectedCurrency = 'USD';
-    jQuery(".containerloader").show();
+jQuery('.link-portfolio').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  router.navigate('/portfolio');
+})
 
-    document.title = "Crypto Portfolio - Track & Manage Your Cryptocurrency Assets";
-    jQuery(".current-view").hide();
-    jQuery('#portfolio').show();
-    jQuery('#portfolio-alerts-content').hide();
-    jQuery(".feedback").empty();
-    toTop();  
-    openPortfolio();
-    openPortfolioAlerts();
+jQuery('.link-watchlist').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  router.navigate('/watchlist');
+})
 
-    jQuery(".containerloader").hide();
-  }
-}
+jQuery('.link-manage-alerts').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  router.navigate('/manage-alerts');
+})
 
-function reloadWatchlist() {
-  jQuery("#watchlist_empty").hide();
-  jQuery("#watchlist-message").hide();
-  if (router.lastRouteResolved().url == "/watchlist" || router.lastRouteResolved().url == "/watchlist/") {
-    selectedCurrency = 'USD';
-    jQuery(".containerloader").show();
+jQuery('.link-about').click(function(e) {
+  e.preventDefault();
+  router.navigate('/about');
+})
 
-    document.title = "Crypto Watchlist - Keep an Eye on Promising Cryptocurrencies";
-    jQuery(".current-view").hide();
-    jQuery('#watchlist').show();
-    jQuery('#watchlist-alerts-content').hide();
-    jQuery(".feedback").empty();
-    toTop();
-    console.log('open watchlist')
-    openWatchlist();
-    // openPortfolioAlerts();
-
-    jQuery(".containerloader").hide();
-  }
-}
-
-function reloadManageAlerts() {
-  if (router.lastRouteResolved().url == "/manage-alerts" || router.lastRouteResolved().url == "/manage-alerts/") {
-    jQuery(".containerloader").show();
-
-    document.title = "Coinwink - Manage Alerts";
-    jQuery(".current-view").hide();
-    jQuery("#manage-alerts").show();
-    toTop();
-    jQuery("#manage_alerts_acc_loader").show();
-    jQuery("#manage_alerts_acc_feedback").html("");
-    ajaxSubmit_acc();
-
-    jQuery(".containerloader").hide();
-  }
-}
+jQuery('.link-pricing').click(function(e) {
+  e.preventDefault();
+  router.navigate('/pricing');
+})
+jQuery('.link-terms').click(function(e) {
+  e.preventDefault();
+  router.navigate('/terms');
+})
+jQuery('.link-privacy').click(function(e) {
+  e.preventDefault();
+  router.navigate('/privacy');
+})
+jQuery('.link-press').click(function(e) {
+  e.preventDefault();
+  router.navigate('/press');
+})
+jQuery('.link-contacts').click(function(e) {
+  e.preventDefault();
+  router.navigate('/contacts');
+})
+jQuery('.link-subscription').click(function(e) {
+  e.preventDefault();
+  router.navigate('/subscription');
+})
 
 
-router
-  .on(function () {
-    jQuery(".containerloader").show();
-
-    switchLocation = "email";
-    jQuery("#email").show();
-
-    jQuery(".containerloader").hide();
-  })
-  .resolve();
+jQuery('.link-email').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  jQuery(".new-crypto-alert-link").hide();
+  router.navigate('/email');
+  // clear_email();
+  // jQuery(".current-view").hide();
+  // jQuery("#email").show();
+})
+jQuery('.link-email-per').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  jQuery(".new-crypto-alert-link").hide();
+  router.navigate('/email-per');
+  // clear_email_per();
+  // jQuery(".current-view").hide();
+  // jQuery("#email").show();
+})
+jQuery('.link-sms').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  jQuery(".new-crypto-alert-link").hide();
+  router.navigate('/sms');
+  // clear_sms();
+  // jQuery(".current-view").hide();
+  // jQuery("#email").show();
+})
+jQuery('.link-sms-per').click(function(e) {
+  e.preventDefault();
+  router._lastRouteResolved = null;
+  jQuery(".new-crypto-alert-link").hide();
+  router.navigate('/sms-per');
+  // clear_sms_per();
+  // jQuery(".current-view").hide();
+  // jQuery("#email").show();
+})
 
 
 router
   .on({
 
     '/watchlist': function () {
-      selectedCurrency = 'USD';
+      // selectedCurrency = 'USD';
+      watchlist_type = 'price';
+
       jQuery(".containerloader").show();
 
-      document.title = "Crypto Watchlist - Keep an Eye on Promising Cryptocurrencies";
+      document.title = "Coinwink - Crypto Watchlist App for 2500+ Cryptocurrencies";
       jQuery(".current-view").hide();
       jQuery('#watchlist').show();
       // jQuery('#portfolio-alerts-content').hide();
       jQuery(".feedback").empty();
       toTop();  
-      openWatchlist();
+      if (isLoggedIn) {
+        openWatchlist();
+      }
       // openPortfolioAlerts();
 
       jQuery(".containerloader").hide();
@@ -95,24 +116,26 @@ router
       jQuery('.coin_page').remove();
     },
     '/portfolio': function () {
-      selectedCurrency = 'USD';
+      // selectedCurrency = 'USD';
       jQuery(".containerloader").show();
 
-      document.title = "Crypto Portfolio - Track & Manage Your Cryptocurrency Assets";
+      document.title = "Coinwink - Crypto Portfolio Tracker and Manager App";
       jQuery(".current-view").hide();
       jQuery('#portfolio').show();
       jQuery('#portfolio-alerts-content').hide();
       jQuery(".feedback").empty();
-      toTop();  
-      openPortfolio();
-      openPortfolioAlerts();
+      toTop(); 
+      if (isLoggedIn) {
+        openPortfolio();
+        openPortfolioAlerts();
+      } 
 
       jQuery(".containerloader").hide();
 
       jQuery('.coin_page').remove();
     },
-
     '/manage-alerts': function () {
+      logsOpen = false;
       jQuery(".containerloader").show();
 
       document.title = "Coinwink - Manage Alerts";
@@ -121,7 +144,9 @@ router
       toTop();
       jQuery("#manage_alerts_acc_loader").show();
       jQuery("#manage_alerts_acc_feedback").html("");
-      ajaxSubmit_acc();
+      if (isLoggedIn) {
+        ajaxSubmit_acc();
+      }
 
       jQuery(".containerloader").hide();
 
@@ -131,7 +156,7 @@ router
     '/email': function () {
       jQuery(".containerloader").show();
 
-      document.title = "Coinwink - Email Crypto Price Alerts";
+      document.title = "Coinwink - Email Price Alert for Bitcoin, Free Crypto Alerts";
       clear_email();
       jQuery(".current-view").hide();
       jQuery("#email").show();
@@ -146,7 +171,7 @@ router
     '/email-per': function () {
       jQuery(".containerloader").show();
 
-      document.title = "Coinwink - Email Crypto Percentage Alerts";
+      document.title = "Coinwink - Email Percentage Alert for Bitcoin, Free Cryptocurrency Alerts";
       clear_email_per();
       jQuery(".current-view").hide();
       jQuery("#email-per").show();
@@ -166,7 +191,7 @@ router
     '/sms': function () {
       jQuery(".containerloader").show();
 
-      document.title = "Coinwink - SMS Crypto Price Alerts";
+      document.title = "Coinwink - SMS Price Alerts for Bitcoin, Ethereum, Cryptocurrency";
       clear_sms();
       jQuery(".current-view").hide();
       jQuery("#sms").show();
@@ -182,7 +207,7 @@ router
     '/sms-per': function () {
       jQuery(".containerloader").show();
 
-      document.title = "Coinwink - SMS Crypto Percentage Alerts";
+      document.title = "Coinwink - SMS Percentage Alerts for Bitcoin, 2500 Crypto Coins and Tokens";
       clear_sms_per();
       jQuery(".current-view").hide();
       jQuery("#sms-per").show();
@@ -270,7 +295,7 @@ router
     '/press': function () {
       jQuery(".containerloader").show();
 
-      document.title = "Coinwink - Press";
+      document.title = "Coinwink - Press Kit";
       jQuery(".current-view").hide();
 
       jQuery(".containerloader").hide();
@@ -298,7 +323,7 @@ router
     '*': function () {
       jQuery(".containerloader").show();
       
-      console.log('custom coin page');
+      // console.log('custom coin page');
 
       clear_email();
       jQuery(".current-view").hide();
@@ -386,7 +411,6 @@ function doNavigation(switchLocation) {
   jQuery('.current-view').hide();
   jQuery('#'+switchLocation).show();
   router.navigate(switchLocation);
-  
 }
 
 jQuery("#smsSwitch").click(function() {
@@ -491,43 +515,6 @@ jQuery("#perSwitch").click(function() {
 });
 
 
-// "NEW ALERT" text links
-jQuery("#newalertemail").click(function() {
-  clear_email();
-  jQuery(".current-view").hide();
-  jQuery("#email").show();
-});
-
-jQuery("#newalertaccemail").click(function() {
-  clear_email();
-  jQuery(".current-view").hide();
-  jQuery("#email").show();
-});
-
-jQuery("#newalertemailpercent").click(function() {
-  clear_email_per();
-  jQuery(".current-view").hide();
-  jQuery("#email-per").show();
-});
-
-jQuery("#newalertemailpercentacc").click(function() {
-  clear_email_per();
-  jQuery(".current-view").hide();
-  jQuery("#email-per").show();
-});
-
-jQuery("#newalertaccsms").click(function() {
-  clear_sms();
-  jQuery(".current-view").hide();
-  jQuery("#sms").show();
-});
-
-jQuery("#newalertsmsper").click(function() {
-  clear_sms_per();
-  jQuery(".current-view").hide();
-  jQuery("#sms-per").show();
-});
-
 
 //
 //
@@ -581,26 +568,31 @@ function ajaxSubmit_acc() {
     url: ajax_url,
     data: manage_alerts+security_url,
     success: function(data) {
-      if (data == 'zero_alerts'){
+
+      if (data == 'zero_alerts') {
         jQuery("#manage_alerts_acc_loader").hide();
-      	jQuery("#manage_alerts_acc_feedback").html('<div style="height:10px;"></div>You have no alerts to manage<div style="height:20px;"></div><div onclick="logsShow()" class="logs" id="logs-show-hide"><span  class="logs-title">Logs</span><div class="logs-content" id="logs-content"></div></div><div style="height:10px;"></div>');
-        
-        
-        // You have no alerts to manage<div style='border-bottom: 1px solid #a5a5a5;margin-top:35px;margin-bottom:10px;'></div><div class='logs-content portfolio-alerts-about' id='logs-content' style='padding-top:10px;padding-bottom:5px;font-size:11px;line-height:150%;'><span onclick='logsShow()' class='blacklink'>Logs</span></div>");
+      	jQuery("#manage_alerts_acc_feedback").html('<div style="height:10px;"></div><br><span style="font-size:12.5px;">You have no alerts to manage.<br><br>Create some alerts first!</span><div style="height:20px;"></div><div onclick="logsShow()" style="position:relative;" class="logs logs-hover" id="logs-show-hide"><div id="logs-close-btn" onclick="logsHide()" style="position:absolute;left:3px;top:3px;height:10px;width:10px;padding:5px;cursor:pointer;" title="Close"><svg width="9" height="9"><use xlink:href="#svg-alert-delete"></use></svg></div><span  class="logs-title">Logs</span><div class="logs-content" id="logs-content"></div></div><div style="height:10px;"></div>');
         return;
       }
+
       alertsDb = JSON.parse(data);
+      // console.log(alertsDb);
+
+      var i = 0;
       jQuery.each(alertsDb, function(key, value) {
         if (alertsDb[key].length != 0) {
           var alert_type = key; // e.g. alerts_email
           jQuery.each(alertsDb[alert_type], function(key, value) {
+            // console.log(value.coin)
             if (!alerts[value.coin]) { alerts[value.coin] = {} }
             value.alert_type = alert_type;
-            alerts[value.coin][value.ID] = value;
+            alerts[value.coin][i] = value;
+            i++;
           });
         }
-        alertsdb = "";
       });
+
+      // console.log(alerts);
 
       if (alerts) {
         alerts_meta = {};
@@ -615,6 +607,29 @@ function ajaxSubmit_acc() {
                   alerts_meta[coin_id] = key;
                   return;
                 }
+                else {
+                  if (i == (jqueryarray.length - 1)) {
+                    // console.log('found');
+                    // console.log(key, objOfObj[0]['alert_type'], objOfObj[0]['ID']);
+                    // console.log(objOfObj[3]);
+
+                    for (var key in objOfObj) {
+                      if (!objOfObj.hasOwnProperty(key)) continue;
+                  
+                      var obj = objOfObj[key];
+                      for (var prop in obj) {
+                          if (!obj.hasOwnProperty(prop)) continue;
+
+                          // console.log(obj['ID'], obj['alert_type']);
+
+                          // auto delete alert which is phantom because either coin's slug changed or the coin was removed from cmc
+                          deleteAnyAlert(obj['ID'], obj['alert_type']);
+                      }
+                    }
+
+
+                  }
+                }
             }
           }
           getCoinId(key);
@@ -625,12 +640,13 @@ function ajaxSubmit_acc() {
 
 
         jQuery.each(alerts_meta, function (coin_id, coin_name) {
-              
-          rank = jqueryarray.findIndex(function(x) { x.id == coin_id });
-
+          // console.log(coin_id, coin_name)
+          // var coin_id = parseInt(coin_id);
+          var rank = jqueryarray.findIndex(function(x) { return x.id == coin_id });
           alerts_rank.push({ 'rank': rank, 'name': coin_name, 'id': coin_id });
-          
         });
+
+        // console.log(alerts_rank)
 
         alerts_rank.sort(function(a, b){
           return a.rank-b.rank
@@ -657,6 +673,7 @@ function ajaxSubmit_acc() {
           sms_alerts_per = 'sms_alerts_per';
           email_alerts_per = 'email_alerts_per';
 
+          // console.log(alerts);
 
           // Build alerts view in the particular order
           jQuery.each(alerts[coin_name], function(id, alert) {
@@ -692,7 +709,7 @@ function ajaxSubmit_acc() {
             }
 
             alert_type = alert.alert_type;
-            
+            // console.log(ma_alert_destination,alert_type)
             jQuery.each(alerts_meta, function (id, name) {
               if (name == coin_name) {
                 // console.log(id);
@@ -700,7 +717,7 @@ function ajaxSubmit_acc() {
               }
             });
 
-            alerts_string += "<div class='alert-box' id='alert-div-"+alert.ID+"'><a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/"+coin_slug+"'><img width='18' src='"+homePath+"/img/coins/32x32/"
+            alerts_string += "<div class='alert-box' id='alert-div-"+alert.ID+"'><a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/"+coin_slug+"/'><img width='18' height='18' class='noselect' src='"+homePath+"img/coins/32x32/"
             +coin_id+".png'></a><br>"+coin_name+" ("+alert.symbol+")"
             +"<br>"+ma_alert_destination+"<br><div style='margin-top:8px;line-height:18px;'>";
             
@@ -708,33 +725,59 @@ function ajaxSubmit_acc() {
               // currency alerts
               if (alert.above.length > 0) {
                 if (alert.above_sent == 1) {
-                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"above_sent\")' class='line-through line-through-link'>Above: <b>"+alert.above+"</b> "+alert.above_currency+"</span><br>";
+                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"above_sent\")' class='line-through cursor-pointer'>Above: <b>"+alert.above+"</b> "+alert.above_currency+"</span><br>";
                 }
                 else {
-                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"above_sent\")' class='line-through-link'>Above: <b>"+alert.above+"</b> "+alert.above_currency+"</span><br>";
+                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"above_sent\")' class='cursor-pointer'>Above: <b>"+alert.above+"</b> "+alert.above_currency+"</span><br>";
                 }
               }
             }
             else {
               // percentage alerts
 
+
+              // get previously set "from" price
+              var from_price = null;
+              if (alert.plus_compared == 'USD') {
+                from_price = (Number(alert.price_set_usd)).toFixed(2);
+              }
+              else if (alert.plus_compared == 'BTC') {
+                // console.log(alert.price_set_btc);
+                from_price = (Number(alert.price_set_btc)).toFixed(8);
+              }
+              else if (alert.plus_compared == 'ETH') {
+                from_price = (Number(alert.price_set_eth)).toFixed(8);
+              }
+
+
               if (alert.plus_percent && alert.plus_sent && alert.plus_change == 'from_now') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through line-through-link'><b>+"+alert.plus_percent+"%</b> compared to "+alert.plus_compared+"</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through cursor-pointer'><b>+"+alert.plus_percent+"%</b></span> from <span title='Update price' onclick='alertPerPriceRefresh("+coin_id+", "+alert.ID+", \""+alert.plus_compared+"\", \"plus\", \""+alert.alert_type+"\")' class='cur-span "+alert.ID+"-spin-"+alert.plus_compared+"' id='"+alert.ID+"-spin-plus'>"+ from_price + "</span> " + alert.plus_compared;
               }
               else if (alert.plus_percent && !alert.plus_sent && alert.plus_change == 'from_now') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through-link'><b>+"+alert.plus_percent +"%</b> compared to "+ alert.plus_compared+"</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='cursor-pointer'><b>+"+alert.plus_percent +"%</b></span> from <span title='Update price' class='cur-span "+alert.ID+"-spin-"+alert.plus_compared+"' onclick='alertPerPriceRefresh("+coin_id+", "+alert.ID+", \""+alert.plus_compared+"\", \"plus\", \""+alert.alert_type+"\")' id='"+alert.ID+"-spin-plus'>"+ from_price + "</span> " + alert.plus_compared;
               }
+
+              // if (alert.plus_percent && alert.plus_sent && alert.plus_change == 'from_now') {
+              //   alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through cursor-pointer'><b>+"+alert.plus_percent+"%</b> compared to "+alert.plus_compared+"</span>";
+              // }
+              // else if (alert.plus_percent && !alert.plus_sent && alert.plus_change == 'from_now') {
+              //   alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='cursor-pointer'><b>+"+alert.plus_percent +"%</b> compared to "+ alert.plus_compared+"</span>";
+              // }
+
+
+
+
               if (alert.plus_percent && alert.plus_sent && alert.plus_change == '1h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through line-through-link'><b>+"+alert.plus_percent+"%</b> in 1h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through cursor-pointer'><b>+"+alert.plus_percent+"%</b> in 1h. period</span>";
               }
               else if (alert.plus_percent && !alert.plus_sent && alert.plus_change == '1h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through-link'><b>+"+alert.plus_percent +"%</b> in 1h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='cursor-pointer'><b>+"+alert.plus_percent +"%</b> in 1h. period</span>";
               }
               if (alert.plus_percent && alert.plus_sent && alert.plus_change == '24h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through line-through-link'><b>+"+alert.plus_percent+"%</b> in 24h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through cursor-pointer'><b>+"+alert.plus_percent+"%</b> in 24h. period</span>";
               }
               else if (alert.plus_percent && !alert.plus_sent && alert.plus_change == '24h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='line-through-link'><b>+"+alert.plus_percent+"%</b> in 24h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"plus_sent\")' class='cursor-pointer'><b>+"+alert.plus_percent+"%</b> in 24h. period</span>";
               }
               if (alert.plus_percent && alert.minus_percent) {
                 alerts_string += "<br>";
@@ -745,33 +788,50 @@ function ajaxSubmit_acc() {
               // currency alerts
               if (alert.below.length > 0) {
                 if (alert.below_sent == '') {
-                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"below_sent\")' class='line-through-link'>Below: <b>"+alert.below+"</b> "+alert.below_currency+"</span><br>";
+                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"below_sent\")' class='cursor-pointer'>Below: <b>"+alert.below+"</b> "+alert.below_currency+"</span><br>";
                 }
                 else {
-                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"below_sent\")' class='line-through line-through-link'>Below: <b>"+alert.below+"</b> "+alert.below_currency+"</span><br>";
+                  alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"below_sent\")' class='line-through cursor-pointer'>Below: <b>"+alert.below+"</b> "+alert.below_currency+"</span><br>";
                 }
               }
             }
             else {
               // percentage alerts
 
+              // get previously set "from" price
+              var from_price = null;
+              if (alert.minus_compared == 'USD') {
+                from_price = (Number(alert.price_set_usd)).toFixed(2);
+              }
+              else if (alert.minus_compared == 'BTC') {
+                // console.log(alert.price_set_btc);
+                from_price = (Number(alert.price_set_btc)).toFixed(8);
+              }
+              else if (alert.minus_compared == 'ETH') {
+                from_price = (Number(alert.price_set_eth)).toFixed(8);
+              }
+
               if (alert.minus_percent && alert.minus_sent && alert.minus_change == 'from_now') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through line-through-link'><b>-"+alert.minus_percent+"%</b> compared to "+alert.minus_compared+"</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through cursor-pointer'><b>-"+alert.minus_percent+"%</b></span> from <span title='Update price' onclick='alertPerPriceRefresh("+coin_id+", "+alert.ID+", \""+alert.minus_compared+"\", \"minus\", \""+alert.alert_type+"\")' class='cur-span noselect "+alert.ID+"-spin-"+alert.minus_compared+"' id='"+alert.ID+"-spin-minus'>"+ from_price + "</span> " + alert.minus_compared;
               }
               else if (alert.minus_percent && !alert.minus_sent && alert.minus_change == 'from_now') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through-link'><b>-"+alert.minus_percent+"%</b> compared to "+alert.minus_compared+"</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='cursor-pointer'><b>-"+alert.minus_percent+"%</b></span> from <span class='cur-span noselect "+alert.ID+"-spin-"+alert.minus_compared+"' title='Update price' onclick='alertPerPriceRefresh("+coin_id+", "+alert.ID+", \""+alert.minus_compared+"\", \"minus\", \""+alert.alert_type+"\")' id='"+alert.ID+"-spin-minus'>"+ from_price + "</span> " + alert.minus_compared;
               }
+
+
+
+
               if (alert.minus_percent && alert.minus_sent && alert.minus_change == '1h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through line-through-link'><b>-"+alert.minus_percent+"%</b> in 1h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through cursor-pointer'><b>-"+alert.minus_percent+"%</b> in 1h. period</span>";
               }
               else if (alert.minus_percent && !alert.minus_sent && alert.minus_change == '1h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through-link'><b>-"+alert.minus_percent+"%</b> in 1h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='cursor-pointer'><b>-"+alert.minus_percent+"%</b> in 1h. period</span>";
               }
               if (alert.minus_percent && alert.minus_sent && alert.minus_change == '24h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through line-through-link'><b>-"+alert.minus_percent+"%</b> in 24h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through cursor-pointer'><b>-"+alert.minus_percent+"%</b> in 24h. period</span>";
               }
               else if (alert.minus_percent && !alert.minus_sent && alert.minus_change == '24h') {
-                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='line-through-link'><b>-"+alert.minus_percent+"%</b> in 24h. period</span>";
+                alerts_string += "<span onclick='alertReenable("+alert.ID+", "+alert_type+", \"minus_sent\")' class='cursor-pointer'><b>-"+alert.minus_percent+"%</b> in 24h. period</span>";
               }
             }
               
@@ -781,9 +841,9 @@ function ajaxSubmit_acc() {
 
         });
         // console.log(alerts_meta);
-        alerts_string += "<div style='font-size:11px;padding:5px 0 10px 0;'>Tip: Click an alert to re-enable it</div>";
+        alerts_string += "<div style='font-size:11px;padding:5px 0 10px 0;line-height: 190%;' class='noselect'>Alerts are sorted by coin market cap<br>Tip: Click an alert to re-enable it</div>";
 
-        alerts_string += '<div onclick="logsShow()" class="logs" id="logs-show-hide"><span  class="logs-title">Logs</span><div class="logs-content" id="logs-content"></div></div><div style="height:10px;"></div>';
+        alerts_string += '<div onclick="logsShow()" style="position:relative;" class="logs logs-hover" id="logs-show-hide"><div id="logs-close-btn" title="Close" onclick="logsHide()" style="position:absolute;left:3px;top:3px;height:10px;width:10px;padding:5px;cursor:pointer;"><svg width="9" height="9"><use xlink:href="#svg-alert-delete"></use></svg></div><div  class="logs-title" style="margin-bottom:8px;">Logs</div><div class="logs-content" id="logs-content"></div></div><div style="height:10px;"></div>';
         
         // <div style='border-bottom: 1px solid #a5a5a5;margin-top:25px;margin-bottom:15px;'></div><div class='logs-content' id='logs-content' style='padding-top:10px;padding-bottom:5px;font-size:11px;line-height:150%;'><span onclick='logsShow()' class='blacklink'>Logs</span></div>";
 
@@ -791,7 +851,7 @@ function ajaxSubmit_acc() {
         jQuery("#manage_alerts_acc_feedback").html(alerts_string);
         
 
-        jQuery(".line-through-link").click(function(event) {
+        jQuery(".cursor-pointer").click(function(event) {
           event.stopPropagation();
           event.stopImmediatePropagation();
           jQuery(this).toggleClass( "line-through" );
@@ -856,6 +916,63 @@ function alertReenable (id, type, microType) {
 }
 
 
+function alertPerPriceRefresh(coinId, alertId, cur, type, delivType) {
+  // console.log(coinId, alertId, microType, cur);
+
+  var priceNew = null;
+
+  for(var i = 0; i < jqueryarray.length; i++) {
+		var coin = jqueryarray[i];
+
+		if (coin['id'] == coinId) {
+      // var eth = coin['price_eth'];
+      // console.log(coin.price_btc, coin.price_eth, coin.price_usd);
+      if (cur == 'USD') {
+        priceNew = coin.price_usd;
+      }
+      else if (cur == 'BTC') {
+        priceNew = coin.price_btc;
+      }
+      else if (cur == 'ETH') {
+        priceNew = coin.price_eth;
+      }
+      break;
+    }
+  }
+
+  // console.log(alertId, cur, priceNew, type);
+  
+  var el = getById(alertId+'-spin-'+type);
+  // console.log(el);
+  el.innerHTML = '';
+
+  el.classList.add("alert-per-price");
+
+  var alert_per_price_refresh = 'action=alert_per_price_refresh&alert_id='+alertId+'&cur='+cur+'&price_new='+priceNew+'&delivery_type='+delivType;
+
+  // console.log(alert_per_price_refresh);
+  
+  // Execute
+  jQuery.ajax({
+    type:"POST",
+    url: ajax_url,
+    data: alert_per_price_refresh+security_url,
+    success: function(data) {
+      if (data == 'success') {
+        el.classList.remove("alert-per-price");
+        if (cur == 'USD') {
+          jQuery('.'+alertId+'-spin-'+cur).html(Number(priceNew).toFixed(2));
+          // el.innerHTML = Number(priceNew).toFixed(2);
+        }
+        else {
+          jQuery('.'+alertId+'-spin-'+cur).html(Number(priceNew).toFixed(8));
+          // el.innerHTML = Number(priceNew).toFixed(8);
+        }
+      }
+    }
+  });
+}
+
 
 //
 // LOGS
@@ -864,17 +981,58 @@ function alertReenable (id, type, microType) {
 
 // for date
 var options = { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' };
+var logsOpen = false;
+
+
+function logsHide() {
+  jQuery("#logs-show-hide").removeClass("logs-expanded");
+  jQuery(".logs-title").removeClass("portfolio-alerts-about-title-bold");
+  jQuery(".logs-content").hide();
+  jQuery("#logs-close-btn").hide();
+  jQuery("#logs-show-hide").addClass("logs-hover");
+  
+  setTimeout(function() {
+    logsOpen = false;
+  }, 100);
+}
 
 // load logs
 function logsShow() {
 
-  jQuery("#logs-show-hide").toggleClass("logs-expanded");
-  jQuery(".logs-title").toggleClass("portfolio-alerts-about-title-bold");
-  jQuery(".logs-content").toggle();
+  if (logsOpen) { return };
+
+  jQuery("#logs-close-btn").show();
+  jQuery("#logs-show-hide").addClass("logs-expanded");
+  jQuery("#logs-show-hide").removeClass("logs-hover");
+  jQuery(".logs-title").addClass("portfolio-alerts-about-title-bold");
+  jQuery(".logs-content").show();
+
+  // jQuery("#logs-show-hide").toggleClass("logs-expanded");
+  // jQuery(".logs-title").toggleClass("portfolio-alerts-about-title-bold");
+  // jQuery(".logs-content").toggle();
 
   jQuery('#logs-content').html('Loading...');
 
   var data = 'action=get_logs';
+
+  function timeConverter(UNIX_timestamp){
+    var a = new Date(UNIX_timestamp * 1000);
+    var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    var year = a.getFullYear();
+    var month = months[a.getMonth()];
+    var date = a.getDate();
+    var hour = a.getHours();
+    hour += '';
+    if (hour.length == 1) { hour = '0'+hour }
+    var min = a.getMinutes();
+    min += '';
+    if (min.length == 1) { min = '0'+min }
+    var sec = a.getSeconds();
+    sec += '';
+    if (sec.length == 1) { sec = '0'+sec }
+    var time = date + ' ' + month + ' ' + year + ' ' + hour + ':' + min + ':' + sec ;
+    return time;
+  }
 
   // Execute
   jQuery.ajax({
@@ -892,18 +1050,25 @@ function logsShow() {
       // @todo: check/show only when logs available
       
       if (logsSms.length > 0) {
-        var logsSmsHtml = '<br><b>SMS alerts</b><br><br>';
+        var logsSmsHtml = '<br><b>SMS alerts</b><div style="height:20px;"></div>';
 
         for (var log in logsSms) {
-          var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsSms[log].timestamp + ' UTC+3').toLocaleString("en-US", options)+'</span>';
+          // var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsSms[log].timestamp).toLocaleString("en-US", options)+'</span>';
+
+          if (logsSms[log].alert_ID.length > 0) {
+            var clientTimestamp = '<a href="'+homePath+'alert/'+logsSms[log].alert_ID+'" target="_blank" class="blacklink">'+logsSms[log].name+' ('+logsSms[log].symbol+') alert</a><br><span style="letter-spacing:1px;">'+timeConverter(logsSms[log].time)+'</span>';
+          }
+          else {
+            var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsSms[log].timestamp).toLocaleString("en-US", options)+'</span>';
+          }
 
           logsSmsHtml += clientTimestamp + '<br>' + logsSms[log].destination;
 
           if (logsSms[log].status == 'error' || logsSms[log].status == 'failed') {
-            logsSmsHtml += '<br><b style="color:red;">Undelivered alert</b><br>Possible reasons:<br>- Wrong phone number or its <a href="https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers" target="_blank" class="blacklink">format</a><br>- Cell phone out of range<br>- Expired Coinwink subscription<br>- No SMS credits available<br>';
+            logsSmsHtml += '<br><b style="color:red;">Undelivered alert</b><br>Possible reasons:<br>- Wrong phone number <a href="https://support.twilio.com/hc/en-us/articles/223183008-Formatting-International-Phone-Numbers" target="_blank" class="blacklink">format</a><br>- Wrong phone number<br>- Cell phone out of range<br>- Expired Coinwink subscription<br>- No SMS credits available<br>';
           }
 
-          logsSmsHtml += '<br><br>';
+          logsSmsHtml += '<div style="height:20px;"></div>';
         }
 
         logsSmsHtml += "<br>";
@@ -912,23 +1077,33 @@ function logsShow() {
       }
 
       if (logsEmail.length > 0) {
-        var logsEmailHtml = '<br><b>Email alerts</b><br><br>';
+        var logsEmailHtml = '<br><b>Email alerts</b><div style="height:20px;"></div>';
 
         for (var log in logsEmail) {
-          var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsEmail[log].timestamp + ' UTC+3').toLocaleString("en-US", options)+'</span>';
+          if (logsEmail[log].alert_ID.length > 0) {
+            var clientTimestamp = '<a href="'+homePath+'alert/'+logsEmail[log].alert_ID+'" target="_blank" class="blacklink">'+logsEmail[log].name+' ('+logsEmail[log].symbol+') alert</a><br><span style="letter-spacing:1px;">'+timeConverter(logsEmail[log].time)+'</span>';
+          }
+          else {
+            var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsEmail[log].timestamp).toLocaleString("en-US", options)+'</span>';
+          }
 
           logsEmailHtml += clientTimestamp + '<br>' + logsEmail[log].destination;
 
           if (logsEmail[log].status == 'error') {
             if (logsEmail[log].error == 'SMTP connect() failed. https://github.com/PHPMailer/PHPMailer/wiki/Troubleshooting') {
-              logsEmailHtml += '<br><b style="color:red;">Undelivered alert</b><br>Automatically blocked. <a href="https://twitter.com/Coinwink/status/1174162988791713793" target="_blank" class="blacklink">Details</a><br>';
+              if (parseInt(logsEmail[log].time) < 1590836464) {
+                logsEmailHtml += '<br><b style="color:red;">Undelivered alert</b><br>Automatically blocked. <a href="https://twitter.com/Coinwink/status/1174162988791713793" target="_blank" class="blacklink">Details</a><br>';
+              }
+              else {
+                logsEmailHtml += '<br><b style="color:red;">Undelivered alert</b><br>Temporary email disruption.<br>';
+              }
             }
             else {
               logsEmailHtml += '<br><b style="color:red;">Undelivered alert</b><br>Double-check your e-mail address.<br>';
             }
           }
 
-          logsEmailHtml += '<br><br>';
+          logsEmailHtml += '<div style="height:20px;"></div>';
         }
 
         logsEmailHtml += "<br>";
@@ -940,12 +1115,19 @@ function logsShow() {
         var logsPortfolioHtml = '<br><b>Portfolio alerts</b><br><br>';
 
         for (var log in logsPortfolio) {
-          var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsPortfolio[log].timestamp + ' UTC+3').toLocaleString("en-US", options)+'</span>';
+          // var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsPortfolio[log].timestamp).toLocaleString("en-US", options)+'</span>';
 
-          logsPortfolioHtml += clientTimestamp + '<br>' + logsPortfolio[log].destination + '<br><br>';
+          if (logsPortfolio[log].alert_ID.length > 0) {
+            var clientTimestamp = '<a href="'+homePath+'alert/'+logsPortfolio[log].alert_ID+'" target="_blank" class="blacklink">'+logsPortfolio[log].name+' ('+logsPortfolio[log].symbol+') alert</a><br><span style="letter-spacing:1px;">'+timeConverter(logsPortfolio[log].time)+'</span>';
+          }
+          else {
+            var clientTimestamp = '<span style="letter-spacing:1px;">'+new Date(logsPortfolio[log].timestamp).toLocaleString("en-US", options)+'</span>';
+          }
+
+          logsPortfolioHtml += clientTimestamp + '<br>' + logsPortfolio[log].destination + '<div style="height:20px;"></div>';
         }
         
-        logsPortfolioHtml += "<br>";
+        // logsPortfolioHtml += "<br>";
 
         finalHtml += logsPortfolioHtml;
       }
@@ -954,13 +1136,28 @@ function logsShow() {
         jQuery("#logs-content").html('<div style="margin-bottom:0px;">'+finalHtml+'</div>');
       }
       else {
-        jQuery('#logs-content').html('<div style="padding:15px;padding-bottom:18px;"><span style="font-size:12px;">No logs yet</span><br></div>');
+        jQuery('#logs-content').html('<div style="padding:15px;padding-bottom:18px;"><span style="font-size:12.5px;">No logs yet.</span><br></div>');
       }
+
+      logsOpen = true;
       
     }
   });
 
 }
+
+
+//
+//
+//
+
+//
+// CREATE ALERTS
+//
+
+//
+//
+//
 
 //
 // Ajax - New EMAIL alert
@@ -995,6 +1192,7 @@ function validate() {
   }
 
 	var form_new_alert = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
 	type:"POST",
@@ -1003,7 +1201,7 @@ function validate() {
 	beforeSend: function(){
     jQuery("#create_alert_button").hide();
     jQuery("#feedback").hide();
-		jQuery("#ajax_loader").show().attr('style','margin-top: 33px');
+		jQuery("#ajax_loader").show();
 	},
 	success:function(data){
 
@@ -1020,8 +1218,7 @@ function validate() {
 		jQuery("#ajax_loader").hide();
 	}
 	else {
-		jQuery("#email").hide();
-		jQuery("#created_alert").attr('style','display: table;border-radius:3px;padding-top:25px');
+      showCreated('email', formData);
 	}
 	}
 	}); 
@@ -1069,6 +1266,7 @@ function validate_acc() {
 	user_email = email;
 
 	var form_new_alert_acc = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
 	type:"POST",
@@ -1076,7 +1274,7 @@ function validate_acc() {
 	data: form_new_alert_acc+security_url,
 	beforeSend: function(){
 		jQuery("#create_alert_button_acc").hide();
-		jQuery("#ajax_loader_acc").show().attr('style','margin-top: 26px');
+		jQuery("#ajax_loader_acc").show();
 	},
 	success:function(data){
 
@@ -1087,8 +1285,7 @@ function validate_acc() {
 			jQuery("#ajax_loader_acc").hide();
 		}
 		else {
-		jQuery(".current-view").hide();
-		jQuery("#created_alert_acc_email").attr('style','display: table;border-radius:3px;padding-top:25px');
+      showCreated('emailAcc', formData);
 		}
 	
 	}
@@ -1130,6 +1327,7 @@ function validate_percent() {
   }
 
 	var form_new_alert_percent = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
     type:"POST",
@@ -1138,7 +1336,7 @@ function validate_percent() {
     beforeSend: function(){
       jQuery("#create_alert_button_percent").hide();
       jQuery("#feedback_percent").hide();
-      jQuery("#ajax_loader_percent").show().attr('style','margin-top: 33px');
+      jQuery("#ajax_loader_percent").show();
     },
     success:function(data){
   
@@ -1155,8 +1353,7 @@ function validate_percent() {
         jQuery("#ajax_loader_percent").hide();
       }
       else {
-        jQuery(".current-view").hide();
-        jQuery("#created_alert_percent").attr('style','display: table;border-radius:3px;padding-top:25px');
+				showCreated('emailPer', formData);
       }
 
 	}
@@ -1206,6 +1403,7 @@ function validate_percent_acc() {
 	user_email = email;
 
 	var form_new_alert_percent_acc = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
 	type:"POST",
@@ -1213,19 +1411,17 @@ function validate_percent_acc() {
 	data: form_new_alert_percent_acc+security_url,
 	beforeSend: function(){
 		jQuery("#create_alert_button_percent_acc").hide();
-		jQuery("#ajax_loader_percent_acc").show().attr('style','margin-top: 33px');
+		jQuery("#ajax_loader_percent_acc").show();
 	},
 	success:function(data){
 
 		if (data == 'Limit error') {
       jQuery("#limit-error-per").show();
-			// jQuery("#feedback_percent_acc").html("You have reached the limit of 10 alerts. To continue, delete some alerts first or <a href='subscription' data-navigo class='blacklink' style='color:red!important;'>subscribe</a> to a Premium plan.");
 			jQuery("#create_alert_button_percent_acc").show();
 			jQuery("#ajax_loader_percent_acc").hide();
 		}
 		else {
-			jQuery(".current-view").hide();
-			jQuery("#created_alert_percent_acc").attr('style','display: table;border-radius:3px;padding-top:25px');
+      showCreated('emailPerAcc', formData);
 		}
 
 	}
@@ -1264,6 +1460,7 @@ function validate_sms() {
 	user_phone_nr = phone;
 
 	var form_new_alert_sms = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
 		type:"POST",
@@ -1271,27 +1468,17 @@ function validate_sms() {
 		data: form_new_alert_sms+security_url,
 		beforeSend: function(){
 			jQuery("#create_alert_button_sms").hide();
-			jQuery("#ajax_loader_sms").show().attr('style','margin-top: 33px');
+			jQuery("#ajax_loader_sms").show();
 		},
 		success:function(data){
 
-			if (data != 'Limit error') {
-				jQuery(".current-view").hide();
-				jQuery("#created_alert_acc_sms").attr('style','display: table;border-radius:3px;padding-top:25px');
+      if (data == 'Subs error') {
+				jQuery("#feedback_sms").html("Subscription not found.<br>To create SMS alerts, please <a href='subscription' data-navigo class='blacklink' style='color:red!important;'>subscribe</a> to the Premium plan.");
 				jQuery("#ajax_loader_sms").hide();
 				jQuery("#create_alert_button_sms").show();
 			}
-			else if (data == 'Limit error') {
-        jQuery("#limit-error").show();
-				// jQuery("#feedback_sms").html("You have reached the limit of 10 alerts. To continue, delete some alerts first or <a href='subscription' data-navigo class='blacklink' style='color:red!important;'>subscribe</a> to a Premium plan.");
-				jQuery("#ajax_loader_sms").hide();
-				jQuery("#create_alert_button_sms").show();
-			}
-			else
-			{
-				jQuery("#feedback_sms").html(data.substring(0, data.length - 1));
-				jQuery("#create_alert_button").show();
-				jQuery("#ajax_loader").hide();
+			else {
+				showCreated('sms', formData);
 			}
 		
 		}
@@ -1329,6 +1516,7 @@ function validate_sms_per() {
 	user_phone_nr = phone;
 
 	var form_new_alert_sms_per = jQuery(this).serialize();
+  var formData = jQuery(this).serializeArray();
 
 	jQuery.ajax({
 		type:"POST",
@@ -1336,24 +1524,213 @@ function validate_sms_per() {
 		data: form_new_alert_sms_per+security_url,
 		beforeSend: function(){
 			jQuery("#create_alert_button_sms_per").hide();
-			jQuery("#ajax_loader_sms_per").show().attr('style','margin-top: 33px');
+			jQuery("#ajax_loader_sms_per").show();
 		},
 		success:function(data){
-			if (data == 'Limit error') {
-        jQuery("#limit-error").show();
-				// jQuery("#feedback_sms_per").html("You have reached the limit of 10 alerts. To continue, delete some alerts first or <a href='subscription' data-navigo class='blacklink' style='color:red!important;'>subscribe</a> to a Premium plan.");
+			if (data == 'Subs error') {
+				jQuery("#feedback_sms_per").html("Subscription not found.<br>To create SMS alerts, please <a href='subscription' data-navigo class='blacklink' style='color:red!important;'>subscribe</a> to the Premium plan.");
 				jQuery("#ajax_loader_sms_per").hide();
 				jQuery("#create_alert_button_sms_per").show();
 			}
 			else {
-				jQuery(".current-view").hide();
-				jQuery("#created_alert_sms_per").attr('style','display: table;border-radius:3px;padding-top:25px');
+				showCreated('smsPer', formData);
 			}
 		
 		}
 	}); 
 	return false;
 }
+
+
+
+// After alert created - User feedback
+function showCreated(type, formData) {
+  // console.log(formData);
+  jQuery(".new-crypto-alert-link").hide();
+
+  // ALL TYPES
+  var coinName = formData[1].value;
+  var coinSymbol = formData[2].value;
+
+  jQuery('.current-view').hide();
+  jQuery('#created-container').show();
+
+  var deliveredTo = '';
+  var double = false;
+
+  jQuery('#created-alert-first').hide();
+  jQuery('#created-alert-second').hide();
+
+  jQuery('.new-alert-link').hide();
+
+  jQuery('#created-header-per').hide();
+  jQuery('#created-header').css('height', '50px');
+
+  // INDIVIDUAL TYPES
+  if (type == 'email') {
+    deliveredTo = formData[3].value;
+
+    if (formData[4].value.length != 0 && formData[6].value.length != 0) {
+      double = true;
+    }
+  }
+  else if (type == 'emailPer') {
+    deliveredTo = formData[6].value;
+
+    if (formData[7].value.length != 0 && formData[10].value.length != 0) {
+      double = true;
+    }
+  }
+  else if (type == 'emailAcc') {
+    deliveredTo = formData[3].value;
+
+    if (formData[4].value.length != 0 && formData[6].value.length != 0) {
+      double = true;
+    }
+  }
+  else if (type == 'emailPerAcc') {
+    deliveredTo = formData[6].value;
+
+    if (formData[7].value.length != 0 && formData[10].value.length != 0) {
+      double = true;
+    }
+  }
+  else if (type == 'sms') {
+    deliveredTo = formData[3].value;
+
+    if (formData[4].value.length != 0 && formData[6].value.length != 0) {
+      double = true;
+    }
+  }
+  else if (type == 'smsPer') {
+    deliveredTo = formData[6].value;
+
+    if (formData[7].value.length != 0 && formData[10].value.length != 0) {
+      double = true;
+    }
+  }
+
+  jQuery('#created-delivered-to').html(deliveredTo);
+
+  if (!double) {
+    jQuery('#created-sing-or-plur').html('Alert');
+    jQuery('#created-alert-type').html('Alert created');
+  }
+  else {
+    jQuery('#created-sing-or-plur').html('Alerts');
+    jQuery('#created-alert-type').html('Alerts created');
+  }
+
+  // Check if user is logged in
+  var acc = true;
+  if (type == 'email' || type == 'emailPer') {
+    acc = false;
+  }
+  if (!acc) {
+    jQuery('#created-sign-up').show();
+  }
+  else {
+    jQuery('#created-manage-alerts-link').show();
+  }
+
+
+  // CUR
+  if (type == 'email' || type == 'emailAcc' || type == 'sms') {
+
+    var deliveryType = 'email';
+
+    if (type == 'sms') {
+      deliveryType = 'SMS'
+    }
+
+    jQuery('#created-header-title').html('New '+deliveryType+' alert');
+
+    var createdStringFirst = '';
+    if (formData[4].value != '') {
+      createdStringFirst = coinName + ' ('+ coinSymbol +')<br>price is above ' + formData[4].value+ ' ' + formData[5].value;
+  
+      jQuery('#created-alert-first').show();
+      jQuery('#created-alert-first').html(createdStringFirst);
+    }
+
+    var createdStringSecond = '';
+    if (formData[6].value != '') {
+      createdStringSecond = coinName + ' ('+ coinSymbol +')<br>price is below ' + formData[6].value + ' ' + formData[7].value;
+      jQuery('#created-alert-second').show();
+      jQuery('#created-alert-second').html(createdStringSecond);  
+    }
+    
+    if (type == 'email') {
+      jQuery('.link-email').show();
+    }
+    else if (type == 'emailAcc') {
+      jQuery('.link-email').show();
+    }
+    else if (type == 'sms') {
+      jQuery('.link-sms').show();
+    }
+
+  }
+
+
+  // PER
+  if (type == 'emailPer' || type == 'emailPerAcc' || type == 'smsPer') {
+
+    jQuery('#created-header-per').show();
+    jQuery('#created-header').css('height', '63px');
+
+    var deliveryType = 'email';
+
+    if (type == 'smsPer') {
+      deliveryType = 'SMS'
+    }
+
+    jQuery('#created-header-title').html('New '+deliveryType+' alert');
+
+    var createdStringFirst = '';
+    if (formData[7].value != '') {
+      if (formData[8].value == 'from_now') {
+        createdStringFirst = coinName + ' ('+ coinSymbol +')<br>price increases by '+formData[7].value+'%<br>compared to '+formData[9].value;
+      }
+      else if (formData[8].value == '1h') {
+        createdStringFirst = coinName + ' ('+ coinSymbol +')<br>price increases by '+formData[7].value+'%<br>in 1 h period';
+      }
+      else if (formData[8].value == '24h') {
+        createdStringFirst = coinName + ' ('+ coinSymbol +')<br>price increases by '+formData[7].value+'%<br>in 24 h period';
+      }
+      jQuery('#created-alert-first').show();
+      jQuery('#created-alert-first').html(createdStringFirst);
+    }
+
+    var createdStringSecond = '';
+    if (formData[10].value != '') {
+      if (formData[11].value == 'from_now') {
+        createdStringSecond = coinName + ' ('+ coinSymbol +')<br> price decreases by '+formData[10].value+'%<br>compared to '+formData[12].value;
+      }
+      else if (formData[11].value == '1h') {
+        createdStringSecond = coinName + ' ('+ coinSymbol +')<br> price decreases by '+formData[10].value+'%<br>in 1 h period';
+      }
+      else if (formData[11].value == '24h') {
+        createdStringSecond = coinName + ' ('+ coinSymbol +')<br> price decreases by '+formData[10].value+'%<br>in 24 h period';
+      }
+      jQuery('#created-alert-second').show();
+      jQuery('#created-alert-second').html(createdStringSecond);  
+    }
+
+    if (type == 'emailPer') {
+      jQuery('.link-email-per').show();
+    }
+    else if (type == 'emailPerAcc') {
+      jQuery('.link-email-per').show();
+    }
+    else if (type == 'smsPer') {
+      jQuery('.link-sms-per').show();
+    }
+
+  }
+
+}
+
 
 
 // Show SMS count for new SMS currency alert
@@ -1430,16 +1807,25 @@ jQuery('#delete_my_acc_button').click(function() {
 	}
 });
 
-
 // function for the below function
 function changeCur(self) {
   var keys = Object.keys(curList);
   var nextIndex = keys.indexOf(curCurrent) +1;
   var nextItem = keys[nextIndex];
   curCurrent = nextItem;
-  var el = (document.getElementById(self.id));
+  var el = getById(self.id);
+
   if (typeof(curCurrent) != 'undefined') {
+    if (isLoggedIn) {
+      jQuery.ajax({
+        type: 'POST',
+        url: ajax_url,
+        data: 'action=config_cur_main&cur_main=' + curCurrent + security_url
+      })
+    }
+
     var price = curList[curCurrent];
+    // console.log(curList, price);
     if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
 
     el.innerHTML = price + empty + curCurrent;
@@ -1451,9 +1837,12 @@ function changeCur(self) {
 }
 
 
+
 //
 // Show current price and add price to percent input
 //
+
+
 
 function showprice() {
 	for(var i = 0; i < jqueryarray.length; i++) {
@@ -1468,19 +1857,25 @@ function showprice() {
 
 
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
       
-      var rbl = coin['price_rbl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
 
-      curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, RBL: rbl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
+
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
@@ -1488,7 +1883,7 @@ function showprice() {
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
 
-      jQuery("#pricediv").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1506,19 +1901,24 @@ function showprice() {
       var usd = coin['price_usd'];
       
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
-    
-      var brl = coin['price_brl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
+      
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
 
       curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
@@ -1526,7 +1926,7 @@ function showprice() {
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
 
-      jQuery("#pricediv_sms").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv_sms").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span-sms' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1542,26 +1942,33 @@ function showprice() {
       if (btc % 1 != 0) { btc = parseFloat(btc).toFixed(8); }
       var usd = coin['price_usd'];
 
+      
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
+      
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
-      var brl = coin['price_brl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
 
       curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
 
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
-      jQuery("#pricediv_acc").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv_acc").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span-acc' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1579,19 +1986,24 @@ function showprice() {
 
 
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
       
-      var brl = coin['price_brl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
 
       curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
@@ -1599,7 +2011,7 @@ function showprice() {
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
 
-      jQuery("#pricediv_percent").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv_percent").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span-per' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1621,20 +2033,26 @@ function showprice() {
 			if (btc % 1 != 0) { btc = parseFloat(btc).toFixed(8); }
 			var usd = coin['price_usd'];
       
+
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
       
-      var brl = coin['price_brl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
 
       curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
@@ -1642,7 +2060,7 @@ function showprice() {
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
 
-      jQuery("#pricediv_percent_acc").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv_percent_acc").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span-per-acc' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1664,26 +2082,31 @@ function showprice() {
       
 
       // new code
-      var eur = coin['price_eur'];
-      var gbp = coin['price_gbp'];
-      var aud = coin['price_aud'];
-      var cad = coin['price_cad'];
+      var eur = coin['price_usd'] * rates['eur'];
+      var gbp = coin['price_usd'] * rates['gbp'];
+      var aud = coin['price_usd'] * rates['aud'];
+      var cad = coin['price_usd'] * rates['cad'];
       
-      var brl = coin['price_brl'];
-      var mxn = coin['price_mxn'];
-      var jpy = coin['price_jpy'];
-      var sgd = coin['price_sgd'];
+      var brl = coin['price_usd'] * rates['brl'];
+      var mxn = coin['price_usd'] * rates['mxn'];
+      var jpy = coin['price_usd'] * rates['jpy'];
+      var sgd = coin['price_usd'] * rates['sgd'];
 
 
       curList = { USD: usd, EUR: eur, GBP: gbp, AUD: aud, CAD: cad, BRL: brl, MXN: mxn, JPY: jpy, SGD: sgd };
-      curCurrent = 'USD';
+      if (!isLoggedIn) {
+        curCurrent = 'USD';
+      }
+      else {
+        curCurrent = cur_main;
+      }
 
       var price = curList[curCurrent];
       if (price < 0.1) { price = parseFloat(price).toFixed(4); } else { price = parseFloat(price).toFixed(2); }
 
       // var price = formatCurrencyHome(curList[curCurrent], curCurrent);
 
-      jQuery("#pricediv_sms_per").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"'><img style='vertical-align:middle;' width='12' src='"+homePath+"/img/coins/16x16/"+
+      jQuery("#pricediv_sms_per").html("<a target='_blank' class='portfoliocoin' href='https://coinmarketcap.com/currencies/" + coin['slug'] +"/'><img style='vertical-align:middle;' width='12' src='"+homePath+"img/coins/16x16/"+
       coin['id']+
       ".png'></a><span style='position:relative;top:1.5px;'> = " + btc + " BTC | " + eth + " ETH | <span onclick='changeCur(this)' id='cur-span-sms-per' class='cur-span noselect'>"+ price + " " + curCurrent + "</span>");
       // end of new code
@@ -1729,45 +2152,9 @@ jQuery("#id_sms_per").change(function () {
 });
 
 
-//
-// Change currency
-//
-function toggleBTC() {
-	if (jQuery("#id").val() == "1") {
-		jQuery("#above_currency").val("USD");
-		jQuery("#below_currency").val("USD");
-	}
-
-	if (jQuery("#id_sms").val() == "1") {
-		jQuery("#above_currency_sms").val("USD");
-		jQuery("#below_currency_sms").val("USD");
-	}
-
-	if (jQuery("#id_acc").val() == "1") {
-		jQuery("#above_currency_acc").val("USD");
-		jQuery("#below_currency_acc").val("USD");
-  }
-}
-
-jQuery(document).ready(function () {
-	toggleBTC();
-});
-
-jQuery("#id_percent").change(function () {
-	toggleBTC();
-});
-
-jQuery("#id_percent_acc").change(function () {
-	toggleBTC();
-});
-
-jQuery("#id_sms_per").change(function () {
-	toggleBTC();
-});
-
 
 //
-// Coin symbol to pass for the backend
+// Coin symbol to pass to the backend
 //
 
 jQuery('#plus_change').change(function(){
@@ -1944,29 +2331,51 @@ function portfolioAlertsSubmit () {
     return;
   }
 
-  if (portfolioAlert1 < 10 || portfolioAlert1 > 1000) {
-    jQuery("#portfolio-user-feedback").html("<span style='padding-top:10px;padding-bottom:10px;color:red;'>Value range between 10% and 1000%</span>");
-    jQuery('#portfolio-alert-1-value').val("10");
-    return;
+  if (portfolioAlert1 < 5 || portfolioAlert1 > 1000) {
+    if (portfolioAlert1 < 5) { 
+      portfolioAlert1 = 5;
+      jQuery('#portfolio-alert-1-value').val("5");
+    }
+    else { 
+      portfolioAlert1 = 1000;
+      jQuery('#portfolio-alert-1-value').val("1000");
+    }
   }
 
-  if (portfolioAlert2 < 10 || portfolioAlert2 > 1000) {
-    jQuery("#portfolio-user-feedback").html("<span style='padding-top:10px;padding-bottom:10px;color:red;'>Value range between 10% and 1000%</span>");
-    jQuery('#portfolio-alert-2-value').val("10");
-    return;
+  if (portfolioAlert2 < 5 || portfolioAlert2 > 1000) {
+    if (portfolioAlert2 < 5) { 
+      portfolioAlert2 = 5;
+      jQuery('#portfolio-alert-2-value').val("5");
+    }
+    else { 
+      portfolioAlert2 = 1000;
+      jQuery('#portfolio-alert-2-value').val("1000");
+    }
   }
   
-  if (portfolioAlert3 < 10 || portfolioAlert3 > 1000) {
-    jQuery("#portfolio-user-feedback").html("<span style='padding-top:10px;padding-bottom:10px;color:red;'>Value range between 10% and 1000%</span>");
-    jQuery('#portfolio-alert-3-value').val("10");
-    return;
+  if (portfolioAlert3 < 5 || portfolioAlert3 > 1000) {
+    if (portfolioAlert3 < 5) { 
+      portfolioAlert3 = 5;
+      jQuery('#portfolio-alert-3-value').val("5");
+    }
+    else { 
+      portfolioAlert3 = 1000;
+      jQuery('#portfolio-alert-3-value').val("1000");
+    }
   }
   
-  if (portfolioAlert4 < 10 || portfolioAlert4 > 1000) {
-    jQuery("#portfolio-user-feedback").html("<span style='padding-top:10px;padding-bottom:10px;color:red;'>Value range between 10% and 1000%</span>");
-    jQuery('#portfolio-alert-4-value').val("10");
-    return;
+  if (portfolioAlert4 < 5 || portfolioAlert4 > 1000) {
+    if (portfolioAlert4 < 5) { 
+      portfolioAlert4 = 5;
+      jQuery('#portfolio-alert-4-value').val("5");
+    }
+    else { 
+      portfolioAlert4 = 1000;
+      jQuery('#portfolio-alert-4-value').val("1000");
+    }
   }
+
+ 
   
   var alertsLabel = "";
 
@@ -2116,8 +2525,15 @@ function promoActivate() {
 }
 
 
-// Stripe checkout
+// Lightbox (kind of)
+function exampleAlerts() {
+  jQuery('body').prepend('<div class="popup" onclick="jQuery(\'.popup\').remove()" style="z-index: 99999;cursor: pointer;"><div style="z-index: 99999;display:grid;background-color: rgba(0,0,0,.8);overflow-x: hidden;-webkit-box-sizing: content-box;box-sizing: content-box;-webkit-box-align: center;-ms-flex-align: center;align-items: center;height:100%;width:100%;position:fixed;"><img src="https://coinwink.com/brand/files/screenshots/02-email-crypto-alerts.png?v=001" style="max-width: 90%;max-height: 85%;display: block;border:4px solid white;position: absolute;left: 0;top: 0;bottom: 0;right: 0;margin: auto;position: fixed;z-index:99999;min-width:100px;min-height:100px;background-color:#4f585b;background-image:url(https://coinwink.com/wp-content/themes/coinwink-theme/img/ajax_loader_dark.gif);background-repeat:no-repeat;background-position:center;"></div></div>');
+}
 
-function stripeCheckout() {
-  alert("Not available in this version.")
+function examplePortfolio() {
+  jQuery('body').prepend('<div class="popup" onclick="jQuery(\'.popup\').remove()" style="z-index: 99999;cursor: pointer;"><div style="z-index: 99999;display:grid;background-color: rgba(0,0,0,.8);overflow-x: hidden;-webkit-box-sizing: content-box;box-sizing: content-box;-webkit-box-align: center;-ms-flex-align: center;align-items: center;height:100%;width:100%;position:fixed;"><img src="https://coinwink.com/brand/files/screenshots/04-portfolio.png" style="max-width: 90%;max-height: 85%;display: block;border:4px solid white;position: absolute;left: 0;top: 0;bottom: 0;right: 0;margin: auto;position: fixed;z-index:99999;min-width:100px;min-height:100px;background-color:#4f585b;background-image:url(https://coinwink.com/wp-content/themes/coinwink-theme/img/ajax_loader_dark.gif);background-repeat:no-repeat;background-position:center;"></div></div>');
+}
+
+function exampleWatchlist() {
+  jQuery('body').prepend('<div class="popup" onclick="jQuery(\'.popup\').remove()" style="z-index: 99999;cursor: pointer;"><div style="z-index: 99999;display:grid;background-color: rgba(0,0,0,.8);overflow-x: hidden;-webkit-box-sizing: content-box;box-sizing: content-box;-webkit-box-align: center;-ms-flex-align: center;align-items: center;height:100%;width:100%;position:fixed;"><img src="https://coinwink.com/brand/files/screenshots/05-watchlist.png?v=001" style="max-width: 90%;max-height: 85%;display: block;border:4px solid white;position: absolute;left: 0;top: 0;bottom: 0;right: 0;margin: auto;position: fixed;z-index:99999;min-width:100px;min-height:100px;background-color:#4f585b;background-image:url(https://coinwink.com/wp-content/themes/coinwink-theme/img/ajax_loader_dark.gif);background-repeat:no-repeat;background-position:center;"></div></div>');
 }

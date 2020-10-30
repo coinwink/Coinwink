@@ -54,8 +54,6 @@ else {
     $SGD = $output["quotes"]["USDSGD"];
 
     echo("PLAN A -> EUR:" . $EUR . " GBP:" . $GBP . " CAD:" . $CAD . " AUD:" . $AUD . " BRL:" . $BRL . " MXN:" . $MXN . " JPY:" . $JPY . " SGD:" . $SGD);
-    
-    // @todo: extra validation to see if the returned data is appropriate
 
     // Update DB
     $sql = "UPDATE cw_data_cur_rates SET EUR = $EUR, GBP = $GBP, CAD = $CAD, AUD = $AUD, BRL = $BRL, MXN = $MXN, JPY = $JPY, SGD = $SGD WHERE ID = 1";

@@ -2,6 +2,261 @@
 
 // Email config
 include ABSPATH . "auth_email_functions.php";
+include ABSPATH . "auth_email.php";
+
+
+
+
+
+//
+// Router, page faker
+//
+if ($_SERVER['REQUEST_METHOD'] == 'GET') {
+	// Get request url
+	$url = parse_url($_SERVER['REQUEST_URI']);
+	$url_slug = basename($url['path']);
+
+	// Get coin price data from the database
+	$resultdb2 = $wpdb->get_results( "SELECT json FROM cw_data_cmc" , ARRAY_A);
+	$newarrayjson = $resultdb2[0]['json'];
+	$newarrayunserialized = unserialize($newarrayjson);
+
+	// (Re-use same cmc data on front-end)
+	add_filter( 'cmc_data_backend', 'return_cmc_data_backend' );
+	function return_cmc_data_backend( $arg = '' ) {
+		global $newarrayunserialized;
+		return $newarrayunserialized;
+	}
+
+	// If the url path is some coin's symbol, then create its page
+    if(is_array($newarrayunserialized)) {
+    foreach ($newarrayunserialized as $jsoncoin) {
+		if ($jsoncoin['symbol'] == strtoupper($url_slug)) {
+			if ($jsoncoin['symbol'] == 'ES') {
+				break;
+			}
+			add_filter( 'the_posts', 'generate_fake_page', -10 );
+			break;
+		}
+	}
+	}
+}
+
+
+
+
+/**
+ * Create a fake page
+ * https://geek.hellyer.kiwi/2018/08/02/creating-fake-wordpress-pages/
+ * 
+ * @param   object  $posts  Original posts object
+ * @global  object  $wp     The main WordPress object
+ * @global  object  $wp     The main WordPress query object
+ * @return  object  $posts  Modified posts object
+ */
+function generate_fake_page( $posts ) {
+	global $wp, $wp_query, $newarrayunserialized;
+
+	$url = parse_url($_SERVER['REQUEST_URI']);
+	$url_slug = basename($url['path']);
+
+    foreach ($newarrayunserialized as $jsoncoin) {
+		if ($jsoncoin['symbol'] == strtoupper($url_slug)) {
+
+			if ( ! defined( 'FAKE_PAGE' ) && ( strtolower( $wp->request ) == $url_slug ) ) {
+
+				// stop interferring with other $posts arrays on this page (only works if the sidebar is rendered *after* the main page)
+				define( 'FAKE_PAGE', true );
+
+				// create a fake virtual page
+				$post = new stdClass;
+				$post->post_author    = 1;
+				$post->post_name      = $url_slug;
+				$post->guid           = home_url() . '/' . $url_slug;
+				$post->post_title     = 'Individual';
+				$post->post_content   = '';
+				$post->ID             = -999;
+				$post->post_type      = 'page';
+				$post->post_status    = 'static';
+				$post->comment_status = 'closed';
+				$post->ping_status    = 'open';
+				$post->comment_count  = 0;
+				$post->post_date      = current_time( 'mysql' );
+				$post->post_date_gmt  = current_time( 'mysql', 1 );
+				$posts                = NULL;
+				$posts[]              = $post;
+
+				// make wpQuery believe this is a real page too
+				$wp_query->is_page             = true;
+				$wp_query->is_singular         = true;
+				$wp_query->is_home             = false;
+				$wp_query->is_archive          = false;
+				$wp_query->is_category         = false;
+				unset( $wp_query->query[ 'error' ] );
+				$wp_query->query_vars[ 'error' ] = '';
+				$wp_query->is_404 = false;
+			}
+
+			return $posts;
+		}
+	}
+}
+
+
+
+
+//
+// THEME SWITCH
+//
+function account_theme(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'account_theme' ) {
+
+        $theme = htmlspecialchars($_POST['theme']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 'theme' => $theme, 't_s' => 0, 't_i' => '' ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_account_theme', 'account_theme');
+add_action('wp_ajax_nopriv_account_theme', 'account_theme');
+
+
+
+//
+// THEME STATIC
+//
+function theme_static(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'theme_static' ) {
+
+        $t_s = htmlspecialchars($_POST['t_s']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 't_s' => $t_s ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_theme_static', 'theme_static');
+add_action('wp_ajax_nopriv_theme_static', 'theme_static');
+
+
+//
+// THEME INTENSITY
+//
+function theme_intensity(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'theme_intensity' ) {
+
+        $t_i = htmlspecialchars($_POST['t_i']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 't_i' => $t_i ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_theme_intensity', 'theme_intensity');
+add_action('wp_ajax_nopriv_theme_intensity', 'theme_intensity');
+
+
+//
+// ACCOUNT FEEDBACK
+//
+
+function account_feedback() {
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'account_feedback' ) {
+
+		$feedback = htmlspecialchars($_POST['feedback']);
+
+		// Get the current user
+		$user_id = get_current_user_id();
+
+		if( $wpdb->insert('cw_feedback', array('message' => $feedback, 'user_id' => $user_id )) === FALSE ) {
+			echo "error";
+		}
+		else {
+			echo "success";
+		}
+
+		$user_email = $wpdb->get_var( "SELECT user_email FROM wp_users WHERE ID = '".$user_id."'" );
+
+		global $adminaddress;
+		// EMAIL NOTICE TO ADMIN
+		$GLOBALS['mail']->addAddress($adminaddress);
+		$GLOBALS['mail']->Subject  = "Feedback";
+		$GLOBALS['mail']->Body = "User ID: " . $user_id . "\nUser email: " . $user_email . "\n\n" . $feedback;
+		$GLOBALS['mail']->Send();
+		$GLOBALS['mail']->ClearAllRecipients();
+
+        die();
+
+	}
+
+}
+add_action('wp_ajax_account_feedback', 'account_feedback');
+add_action('wp_ajax_nopriv_account_feedback', 'account_feedback');
+
+
+
+// Get user IP for rate limiter
+function getUserIP()
+{
+    $client  = @$_SERVER['HTTP_CLIENT_IP'];
+    $forward = @$_SERVER['HTTP_X_FORWARDED_FOR'];
+    $remote  = $_SERVER['REMOTE_ADDR'];
+
+    if(filter_var($client, FILTER_VALIDATE_IP))
+    {
+        $ip = $client;
+    }
+    elseif(filter_var($forward, FILTER_VALIDATE_IP))
+    {
+        $ip = $forward;
+    }
+    else
+    {
+        $ip = $remote;
+    }
+
+    return $ip;
+}
 
 
 
@@ -64,14 +319,34 @@ add_action('wp_ajax_update_portfolio', 'update_portfolio');
 add_action('wp_ajax_nopriv_update_portfolio', 'update_portfolio');
 
 
+function config_cur_p(){
 
-/// /// ///
-/// /// ///
-/// /// ///
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
 
-// WATCHLIST
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'config_cur_p' ) {
+
+        $config_cur_p = htmlspecialchars($_POST['cur_p']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 'cur_p' => $config_cur_p ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_config_cur_p', 'config_cur_p');
+add_action('wp_ajax_nopriv_config_cur_p', 'config_cur_p');
 
 
+/////////////////
+/// WATCHLIST ///
+/////////////////
 
 
 //
@@ -97,7 +372,6 @@ function get_watchlist(){
 }
 add_action('wp_ajax_get_watchlist', 'get_watchlist');
 add_action('wp_ajax_nopriv_get_watchlist', 'get_watchlist');
-
 
 
 //
@@ -133,8 +407,87 @@ add_action('wp_ajax_update_watchlist', 'update_watchlist');
 add_action('wp_ajax_nopriv_update_watchlist', 'update_watchlist');
 
 
-///////////
 
+
+function config_cur_w(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'config_cur_w' ) {
+
+        $config_cur_w = htmlspecialchars($_POST['cur_w']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 'cur_w' => $config_cur_w ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_config_cur_w', 'config_cur_w');
+add_action('wp_ajax_nopriv_config_cur_w', 'config_cur_w');
+
+
+function config_conf_w(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'config_conf_w' ) {
+
+        $config_conf_w = htmlspecialchars($_POST['conf_w']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 'conf_w' => $config_conf_w ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_config_conf_w', 'config_conf_w');
+add_action('wp_ajax_nopriv_config_conf_w', 'config_conf_w');
+
+
+function config_cur_main(){
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'config_cur_main' ) {
+
+        $config_cur_main = htmlspecialchars($_POST['cur_main']);
+
+        // Get the current user
+        $user_ID = get_current_user_id();
+		
+		if ($wpdb->update( 'cw_settings', array( 'cur_main' => $config_cur_main ), array ( 'user_ID' => $user_ID ))) {
+			echo('success');
+		}
+
+		die();
+	}
+}
+add_action('wp_ajax_config_cur_main', 'config_cur_main');
+add_action('wp_ajax_nopriv_config_cur_main', 'config_cur_main');
+
+
+
+/////////////////////
+/// CREATE ALERTS ///
+/////////////////////
 
 
 //
@@ -149,9 +502,20 @@ check_ajax_referer( 'my-special-string', 'security' );
 global $wpdb;
 if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'create_alert_percent' ) {
 
-$error = apply_filters( 'cptch_verify', true );
 
-if ( true === $error ) { 
+
+$ip = getUserIP();
+// echo($ip);
+
+
+$req_count = $wpdb->get_var("SELECT COUNT(*) FROM cw_rate_limiter WHERE ip = '".$ip."'" );
+if ($req_count > 100 && $ip != '176.223.143.200') {
+	echo("Limit error");
+	exit();
+}
+
+
+if ( true ) { 
 
 	$coin = htmlspecialchars($_POST['coin']);
 	$coin_id = htmlspecialchars($_POST['id']);
@@ -168,6 +532,11 @@ if ( true === $error ) {
 	$minus_change = htmlspecialchars($_POST['minus_change']);
 	$minus_compared = htmlspecialchars($_POST['minus_compared']);
 	$email = htmlspecialchars($_POST['email_percent']);
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		echo("Limit error");
+		exit();
+	}
 
 	// Get alerts count for user without acc
 	$alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE email = '".$email."'" );
@@ -213,7 +582,7 @@ else {
 
 	$message = 'A new '. $coin .' ('. $symbol .') percentage alert has been created.
 	
-You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account/
+You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account
 
 Wink,
 Coinwink';
@@ -221,6 +590,14 @@ Coinwink';
 	wp_mail($to, $subject, $message);
 
 }
+
+$wpdb->insert( 'cw_rate_limiter',
+	array(
+		'ip' => $ip,
+		'action' => 'free_per_alert'
+	)
+);
+
 die();
 }
 else {
@@ -269,13 +646,24 @@ function create_alert_percent_acc(){
 		if ($subs == 0) {
 			$alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE unique_id = '".$unique_id."'" );
 			$alerts_count_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_per WHERE unique_id = '".$unique_id."'" );
-			$alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
-			$alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
-			$alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
-			if ($alerts_count >= 5) {
+			// $alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
+			// $alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
+            // $alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
+			$alerts_count = $alerts_count_cur + $alerts_count_per;
+			
+			
+			if ($user_ID == 24301 || $user_ID == 19762 || $user_ID == 7929) {
+				if ($alerts_count >= 10) {
+					echo("Limit error");
+					exit();
+				}
+			}
+			else if ($alerts_count >= 5) {
 				echo("Limit error");
 				exit();
 			}
+
+
 		}
 
 		// Save email for later use
@@ -314,7 +702,7 @@ function create_alert_percent_acc(){
 	
 	$message = 'A new '. $coin .' ('. $symbol .') percentage alert has been created.
 	
-You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account/
+You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account
 	
 Wink,
 Coinwink';
@@ -360,13 +748,24 @@ if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POS
 	if ($subs == 0) {
 		$alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE unique_id = '".$unique_id."'" );
 		$alerts_count_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_per WHERE unique_id = '".$unique_id."'" );
-		$alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
-		$alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
-		$alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
-		if ($alerts_count >= 5) {
+		// $alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
+		// $alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
+        // $alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
+		$alerts_count = $alerts_count_cur + $alerts_count_per;
+		
+
+		if ($user_ID == 24301 || $user_ID == 19762 || $user_ID == 7929) {
+			if ($alerts_count >= 10) {
+				echo("Limit error");
+				exit();
+			}
+		}
+		else if ($alerts_count >= 5) {
 			echo("Limit error");
 			exit();
 		}
+
+
 	}
 
 // Save email for later use
@@ -460,9 +859,21 @@ check_ajax_referer( 'my-special-string', 'security' );
 global $wpdb;
 if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'create_alert' ) {
 
-$error = apply_filters( 'cptch_verify', true );
 
-if ( true === $error ) { 
+
+$ip = getUserIP();
+// echo($ip);
+
+
+$req_count = $wpdb->get_var("SELECT COUNT(*) FROM cw_rate_limiter WHERE ip = '".$ip."'" );
+// echo($req_count);
+if ($req_count > 100 && $ip != '176.223.143.200') {
+	echo("Limit error");
+	exit();
+}
+
+
+if ( true ) { 
 
 	$coin = htmlspecialchars($_POST['coin']);
 	$coin_id = htmlspecialchars($_POST['id']);
@@ -472,6 +883,11 @@ if ( true === $error ) {
 	$above = str_replace(',', '.', htmlspecialchars($_POST['above']));
 	$above_currency = htmlspecialchars($_POST['above_currency']);
 	$email = htmlspecialchars($_POST['email']);
+
+	if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+		echo("Limit error");
+		exit();
+	}
 
 // Get alerts count for user without acc
 $alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE email = '".$email."'" );
@@ -517,7 +933,7 @@ $message = ''. $coin .' ('. $symbol .') price alert has been created.
 
 You will receive an email alert when '. $coin .' ('. $symbol .') price will be below: '. $below .' '. $below_currency .'.
 
-You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account/
+You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account
 
 Wink,
 Coinwink';
@@ -528,7 +944,7 @@ $message = ''. $coin .' ('. $symbol .') price alert has been created.
 
 You will receive email alerts when '. $coin .' ('. $symbol .') price will be above: '. $above .' '. $above_currency .' and below: '. $below .' '. $below_currency .'.
 
-You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account/
+You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account
 
 Wink,
 Coinwink';
@@ -539,7 +955,7 @@ $message = ''. $coin .' ('. $symbol .') price alert has been created.
 
 You will receive an email alert when '. $coin .' ('. $symbol .') price will be above: '. $above .' '. $above_currency .'.
 
-You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account/
+You can manage your alert(-s) with a free Coinwink account: https://coinwink.com/account
 
 Wink,
 Coinwink';
@@ -551,6 +967,14 @@ Coinwink';
 wp_mail($to, $subject, $message/*, $headers*/);
 
 }
+
+$wpdb->insert( 'cw_rate_limiter',
+	array(
+		'ip' => $ip,
+		'action' => 'free_cur_alert'
+	)
+);
+
 die();
 
 }
@@ -569,7 +993,7 @@ add_action('wp_ajax_nopriv_create_alert', 'create_alert');
 //
 // AJAX - NEW SMS ALERT - CURRENCY - ACC
 //
-function create_alert_sms(){
+function create_alert_sms() {
 
 	// WP NONCE CHECK
 	check_ajax_referer( 'my-special-string', 'security' );
@@ -592,15 +1016,8 @@ function create_alert_sms(){
 		// Get alerts count for user with acc
 		$subs = $wpdb->get_var( "SELECT subs FROM cw_settings WHERE user_ID = '".$user_ID."'" );
 		if ($subs == 0) {
-			$alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE unique_id = '".$unique_id."'" );
-			$alerts_count_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_per WHERE unique_id = '".$unique_id."'" );
-			$alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
-			$alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
-			$alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
-			if ($alerts_count >= 5) {
-				echo("Limit error");
-				exit();
-			}
+            echo("Subs error");
+            exit();
 		}
 
 		// Save phone number for later use
@@ -614,20 +1031,21 @@ function create_alert_sms(){
 			)
 		);
 
-		if($wpdb->insert('cw_alerts_sms_cur', array(
-				'coin' => $coin,
-				'coin_id' => $coin_id,
-				'symbol' => $symbol,
-				'below' => $below,
-				'below_currency' => $below_currency,
-				'above' => $above,
-				'above_currency' => $above_currency,
-				'phone' => $phone,
-				'user_ID' => $user_ID,
-				'timestamp' => $timestamp ))===FALSE){
-		echo "Error"; }
+		if ($wpdb->insert('cw_alerts_sms_cur', array(
+            'coin' => $coin,
+            'coin_id' => $coin_id,
+            'symbol' => $symbol,
+            'below' => $below,
+            'below_currency' => $below_currency,
+            'above' => $above,
+            'above_currency' => $above_currency,
+            'phone' => $phone,
+            'user_ID' => $user_ID,
+            'timestamp' => $timestamp )) === FALSE) {
+            echo "Error";
+        }
 
-	die();
+        die();
 
 	}
 
@@ -644,7 +1062,6 @@ function create_alert_sms_per(){
 
 	// WP NONCE CHECK
 	check_ajax_referer( 'my-special-string', 'security' );
-	//
 	
 	global $wpdb;
 	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'create_alert_sms_per' ) {
@@ -670,15 +1087,8 @@ function create_alert_sms_per(){
 		// Get alerts count for user with acc
 		$subs = $wpdb->get_var( "SELECT subs FROM cw_settings WHERE user_ID = '".$user_ID."'" );
 		if ($subs == 0) {
-			$alerts_count_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_cur WHERE unique_id = '".$unique_id."'" );
-			$alerts_count_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_email_per WHERE unique_id = '".$unique_id."'" );
-			$alerts_count_sms_cur = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_cur WHERE user_ID = '".$user_ID."'" );
-			$alerts_count_sms_per = $wpdb->get_var( "SELECT COUNT(*) FROM cw_alerts_sms_per WHERE user_ID = '".$user_ID."'" );
-			$alerts_count = $alerts_count_cur + $alerts_count_per + $alerts_count_sms_cur + $alerts_count_sms_per;
-			if ($alerts_count >= 5) {
-				echo("Limit error");
-				exit();
-			}
+            echo("Subs error");
+            exit();
 		}
 
 		// Save email for later use
@@ -692,7 +1102,7 @@ function create_alert_sms_per(){
 			)
 		);
 	
-		if($wpdb->insert('cw_alerts_sms_per', array(
+		if ($wpdb->insert('cw_alerts_sms_per', array(
 			'coin' => $coin,
 			'coin_id' => $coin_id,
 			'symbol' => $symbol,
@@ -719,6 +1129,14 @@ add_action('wp_ajax_create_alert_sms_per', 'create_alert_sms_per');
 add_action('wp_ajax_nopriv_create_alert_sms_per', 'create_alert_sms_per');	
 
 
+
+/// /// ///
+/// /// ///
+/// /// ///
+
+/// /// ///
+/// /// ///
+/// /// ///
 
 /// /// ///
 /// /// ///
@@ -781,20 +1199,51 @@ function alert_reenable(){
 
         $alert_id = htmlspecialchars($_POST['alert_id']);
         $alert_type = htmlspecialchars($_POST['type']); // cw_alerts_email_cur
-        $microType = htmlspecialchars($_POST['microType']);
-
+		$microType = htmlspecialchars($_POST['microType']);
+		
+		$user_ID = get_current_user_id();
 
         if ($alert_type == "email_alerts") {
-            $alert_type = 'cw_alerts_email_cur';
+			$alert_type = 'cw_alerts_email_cur';
+			
+			$alert_user_unique_ID = $wpdb->get_var( "SELECT unique_id FROM cw_alerts_email_cur WHERE ID = '".$alert_id."'" );
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_settings WHERE unique_id = '".$alert_user_unique_ID."'" );
+
+			if ($alert_user_ID != $user_ID) {
+				return("Huh?");
+				die();
+			}
         }
         else if ($alert_type == "sms_alerts") {
-            $alert_type = 'cw_alerts_sms_cur';
+			$alert_type = 'cw_alerts_sms_cur';
+
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_alerts_sms_cur WHERE ID = '".$alert_id."'" );
+			
+			if ($alert_user_ID != $user_ID) {
+				return("Huh?");
+				die();
+			}
         }
         else if ($alert_type == "email_alerts_per") {
-            $alert_type = 'cw_alerts_email_per';
+			$alert_type = 'cw_alerts_email_per';
+			
+			$alert_user_unique_ID = $wpdb->get_var( "SELECT unique_id FROM cw_alerts_email_per WHERE ID = '".$alert_id."'" );
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_settings WHERE unique_id = '".$alert_user_unique_ID."'" );
+
+			if ($alert_user_ID != $user_ID) {
+				return("Huh?");
+				die();
+			}
         }
         else if ($alert_type == "sms_alerts_per") {
-            $alert_type = 'cw_alerts_sms_per';
+			$alert_type = 'cw_alerts_sms_per';
+			
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_alerts_sms_per WHERE ID = '".$alert_id."'" );
+			
+			if ($alert_user_ID != $user_ID) {
+				return("Huh?");
+				die();
+			}
         }
 
         // echo($alert_id . $alert_type . $microType);
@@ -817,6 +1266,82 @@ function alert_reenable(){
 add_action('wp_ajax_alert_reenable', 'alert_reenable');
 add_action('wp_ajax_nopriv_alert_reenable', 'alert_reenable');
 
+
+
+//
+// ALERT PER PRICE REFRESH
+//
+function alert_per_price_refresh(){
+
+	// echo('success');
+	// exit();
+
+	// WP NONCE CHECK
+	check_ajax_referer( 'my-special-string', 'security' );
+
+	global $wpdb;
+
+	if ( 'POST' == $_SERVER['REQUEST_METHOD'] && !empty( $_POST['action'] ) && $_POST['action'] == 'alert_per_price_refresh' ) {
+
+        $alert_id = htmlspecialchars($_POST['alert_id']);
+        $cur = htmlspecialchars($_POST['cur']);
+        $price_new = htmlspecialchars($_POST['price_new']);
+		$delivery_type = htmlspecialchars($_POST['delivery_type']);
+
+		// echo($alert_id . $cur . $price_new . $delivery_type);
+
+		// Validate and update
+		if ($delivery_type == "email_alerts_per") {
+			$alert_user_unique_ID = $wpdb->get_var( "SELECT unique_id FROM cw_alerts_email_per WHERE ID = '".$alert_id."'" );
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_settings WHERE unique_id = '".$alert_user_unique_ID."'" );
+			$user_ID = get_current_user_id();
+			
+			if ($alert_user_ID == $user_ID) {
+				if ($cur == "USD") {
+					$wpdb->update( 'cw_alerts_email_per',  array( 'price_set_usd' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+				else if ($cur == "ETH") {
+					$wpdb->update( 'cw_alerts_email_per',  array( 'price_set_eth' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+				else if ($cur == "BTC") {
+					$wpdb->update( 'cw_alerts_email_per',  array( 'price_set_btc' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+			}
+			else {
+				echo('Huh?');
+			}
+			die();
+		}
+        else if ($delivery_type == "sms_alerts_per") {
+			$alert_user_ID = $wpdb->get_var( "SELECT user_ID FROM cw_alerts_sms_per WHERE ID = '".$alert_id."'" );
+			$user_ID = get_current_user_id();
+			
+			if ($alert_user_ID == $user_ID) {
+				if ($cur == "USD") {
+					$wpdb->update( 'cw_alerts_sms_per',  array( 'price_set_usd' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+				else if ($cur == "ETH") {
+					$wpdb->update( 'cw_alerts_sms_per',  array( 'price_set_eth' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+				else if ($cur == "BTC") {
+					$wpdb->update( 'cw_alerts_sms_per',  array( 'price_set_btc' => $price_new ), array( 'ID' => $alert_id ) );
+					echo("success");
+				}
+			}
+			else {
+				echo('Huh?');
+			}
+			die();
+		}
+	}
+}
+add_action('wp_ajax_alert_per_price_refresh', 'alert_per_price_refresh');
+add_action('wp_ajax_nopriv_alert_per_price_refresh', 'alert_per_price_refresh');
 
 
 //
@@ -917,7 +1442,7 @@ function get_logs(){
             $i++;
         }
 
-        $alerts_sms = $wpdb->get_results( "SELECT * FROM cw_logs_alerts_sms WHERE user_ID = '".$user_ID."'", ARRAY_A );
+        $alerts_sms = $wpdb->get_results( "SELECT * FROM cw_logs_alerts_sms WHERE user_ID = '".$user_ID."' AND type != 'sms_por'", ARRAY_A );
 
         $i = 0;
         foreach ($alerts_sms as $alert) {
@@ -1019,7 +1544,7 @@ function portfolio_alerts_create(){
         $change_24h_plus = htmlspecialchars($_POST['portfolio-alert-3-value']);
         $change_24h_minus = htmlspecialchars($_POST['portfolio-alert-4-value']);
 
-        if ($change_1h_plus > 1000 || $change_1h_plus < 10 || $change_1h_minus > 1000 || $change_1h_minus < 10 || $change_24h_plus > 1000 || $change_24h_plus < 10 || $change_24h_minus > 1000 || $change_24h_minus < 10 ) {
+        if ($change_1h_plus > 1000 || $change_1h_plus < 5 || $change_1h_minus > 1000 || $change_1h_minus < 5 || $change_24h_plus > 1000 || $change_24h_plus < 5 || $change_24h_minus > 1000 || $change_24h_minus < 5 ) {
             echo('error');
             exit();
         }
@@ -1101,7 +1626,7 @@ function delete_alert_acc_email(){
             $wpdb->delete( cw_alerts_email_cur,  array( 'ID' => $alert_id ) );
         }
         else {
-            echo('Hacking?');
+            echo('Huh?');
         }
 
 		die();
@@ -1134,7 +1659,7 @@ function delete_alert_percent_acc(){
             $wpdb->delete( cw_alerts_email_per,  array( 'ID' => $alert_id ) );
         }
         else {
-            echo('Hacking?');
+            echo('Huh?');
         }
 		
 		die();
@@ -1166,7 +1691,7 @@ function delete_alert_acc_sms(){
             $wpdb->delete( cw_alerts_sms_cur,  array( 'ID' => $alert_id ) );
         }
         else {
-            echo('Hacking?');
+            echo('Huh?');
         }
 		
 		die();
@@ -1198,7 +1723,7 @@ function delete_alert_acc_sms_per(){
             $wpdb->delete( cw_alerts_sms_per,  array( 'ID' => $alert_id ) );
         }
         else {
-            echo('Hacking?');
+            echo('Huh?');
         }
 		
 		die();
@@ -1229,13 +1754,26 @@ function delete_my_acc(){
 	$user_id = get_current_user_id();
     
     
-    // If subscription exists and has ID higher than 77 (after Cardinity), then call Stripe to unsubscribe
+    // if subscription, then cancel
+	$subscription = $wpdb->get_results( "SELECT * FROM cw_subs WHERE user_ID = '".$user_id."' AND (status = 'active' OR status = 'suspended')", ARRAY_A );
 
-    $subscription = $wpdb->get_results( "SELECT * FROM cw_subs WHERE user_ID = '".$user_id."' AND status = 'active'", ARRAY_A );
+	if(isset($subscription[0])) {
 
-    if ($subscription[0]["ID"] > 77) {
-        cancel_stripe($subscription[0]["subscription"]);
-    }
+		// if ID higher than 77 (after Cardinity) and is not a promo user, then call Stripe to unsubscribe
+		if ($subscription[0]["ID"] > 77 && $subscription[0]["payment_ID"] != "X") {
+
+			$cancelled = cancel_stripe($subscription[0]["subscription"]);
+	
+			if (!$cancelled) { 
+				return('error');
+			}
+		}
+
+		// update db
+		$new_user_id = 0 - $user_id;
+		$wpdb->update( 'cw_subs', array( 'status' => 'acc deleted', 'user_ID' => $new_user_id, 'date_cancelled' => date("Y-m-d H:i:s") ), array( 'user_ID' => $user_id ));
+
+	}
 
 
 	// Get user meta
@@ -1261,12 +1799,6 @@ function delete_my_acc(){
     $wpdb->delete( 'cw_logs_alerts_email', array( 'user_ID' => $unique_id ));
     $wpdb->delete( 'cw_logs_alerts_sms', array( 'user_ID' => $user_id ));
     $wpdb->delete( 'cw_logs_alerts_portfolio', array( 'user_ID' => $user_id ));
-	
-	$new_user_ID = 0 - $user_id;
-	// Cancel subscription and delete all related data
-    $wpdb->update( 'cw_subs', array( 'status' => 'acc deleted', 'user_ID' => $new_user_ID ), array( 'user_ID' => $user_id ));
-	// $wpdb->delete( 'cw_logs_subs', array( 'user_ID' => $user_id ));
-	// $wpdb->delete( 'cw_logs_sms', array( 'user_ID' => $user_id ));
 
 	// Delete the user's account
 	wp_delete_user( $user_id );
@@ -1293,30 +1825,33 @@ function cancel_subscription(){
 	global $wpdb;
 	
 	// Get the current user
-	$user_ID = get_current_user_id();
+	$user_id = get_current_user_id();
 
 
-    $subscription = $wpdb->get_results( "SELECT * FROM cw_subs WHERE user_ID = '".$user_ID."' AND status = 'active'", ARRAY_A );
+	// if subscription exists, then cancel
+    $subscription = $wpdb->get_results( "SELECT * FROM cw_subs WHERE user_ID = '".$user_id."' AND status = 'active'", ARRAY_A );
 
-    // var_dump ($subscription);
-    // echo($subscription[0]["ID"]);
+	if(isset($subscription[0])) {
+		// if ID higher than 77 (after Cardinity) and is not a promo user, then call Stripe to unsubscribe
+		if ($subscription[0]["ID"] > 77 && $subscription[0]["payment_ID"] != "X") {
 
-    if ($subscription[0]["ID"] > 77) {
-        $canceled = cancel_stripe($subscription[0]["subscription"]);
-    }
+			$cancelled = cancel_stripe($subscription[0]["subscription"]);
+	
+			if (!$cancelled) { 
+				return('error');
+			}
+		}
+	}
 
-    if ($subscription[0]["ID"] > 77 && !$canceled) { 
-        return('error'); 
-    }
 
-
+	// update db
 	$wpdb->update ( 'cw_subs', 
 		array( 
 			'status' => 'cancelled',
 			'date_cancelled' => date("Y-m-d H:i:s")
 		), 
 		array( 
-			'user_ID' => $user_ID
+			'user_ID' => $user_id
 		)
 	);
 		
@@ -1493,160 +2028,112 @@ function footer_shortcode_func() {
 
 		<footer style="text-align: center;">
 
-            <?php global $post; $post_slug = $post->post_name; ?>
+			<?php 
+				global $post; 
+				// $post_slug = $post->post_name; 
+			?>
 
-            <?php if (($post_slug == "doge" || $post_slug == "eth"  || $post_slug == "xrp") && !is_user_logged_in()) { ?>
-                <div class="coin_page" style="max-width:280px;margin:0 auto;color:white;">
-                    <div style="height:15px;"></div>
-                    <div style="width:45px;height:45px;margin:0 auto;">
+			<?php 
+				if (is_page_template( 'template-home.php' ) || $post->post_title == "Individual" || is_404()) {
 
-                        <?php if ($post_slug == "doge") { ?>
-                            <img src="https://cryptologos.cc/logos/dogecoin-doge-logo.svg?v=001" style="width:100%;height:100%;">
-
-                        <?php } else if ($post_slug == "eth") { ?>
-                            <img src="https://cryptologos.cc/logos/ethereum-eth-logo.svg?v=001" style="width:100%;height:100%;">
-
-                        <?php } else if ($post_slug == "xrp") { ?>
-                            <img src="https://cryptologos.cc/logos/xrp-xrp-logo.svg?v=001" style="width:100%;height:100%;">
-                        <?php } ?>
-                        
-                    </div>
-                    <div style="height:20px;"></div>
-
-                    <?php if ($post_slug == "doge") { ?>
-                        Sign up for a free Coinwink account to use the extra features for Dogecoin (DOGE) and other 2500+ cryptocurrencies
-
-                    <?php } else if ($post_slug == "eth") { ?>
-                        Sign up for a free Coinwink account to use the extra features for Ethereum (ETH) and other 2500+ cryptocurrencies
-
-                    <?php } else if ($post_slug == "xrp") { ?>
-                        Sign up for a free Coinwink account to use the extra features for XRP and other 2500+ cryptocurrencies
-                    <?php } ?>
-
-                    <div style="height:18px;"></div>
-                    <span style="line-height:220%;">
-                        <span onclick="exampleAlerts()" target="_blank" style="font-size:12px;text-decoration:underline;cursor:pointer;" class="whitelink" >Manage your crypto alerts</span>
-                        <br>
-                        <span onclick="examplePortfolio()" style="font-size:12px;text-decoration:underline;cursor:pointer;" class="whitelink" >Track your portfolio holdings</span>
-                        <br>
-                        <span onclick="exampleWatchlist()" target="_blank" style="font-size:12px;text-decoration:underline;cursor:pointer;" class="whitelink" >Crypto watchlist</span>
-                        <br>
-                    </span>
-                    <div style="height:12px;"></div>
-                    <button class="button-acc-2020" style="font-family:Montserrat;outline:0;" onclick="window.location.href = 'https://coinwink.com/account'">Sign Up</button>
-                    <div style="height:40px;"></div>
-                </div>
-
-            <?php } ?>
-
-
-			<?php if (is_page_template( 'template-home.php' )) { 	?>
+					$url = parse_url($_SERVER['REQUEST_URI']);
+					$url_slug = $url['path'];
+					$slashes = substr_count($url_slug, '/');
+					$url_prefix = '';
+					if ($slashes == 3) {
+						$url_prefix = '..';
+					}
+					if ($slashes == 4) {
+						$url_prefix = '../..';
+					}
+			?>
 
 				<?php if ( is_user_logged_in() ) { ?>
 
-                    <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;color:#bfbfbf;">
-                        <a href="manage-alerts" data-navigo class="whitelink alertslink" onclick="reloadManageAlerts()">Alerts</a>
+                    <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;" class="text-footer-links">
+                        <a href="<?php echo($url_prefix); ?>/manage-alerts" class="whitelink link-manage-alerts">Alerts</a>
                         &nbsp;|&nbsp;
-                        <a href="<?php echo site_url(); ?>/account/" class="whitelink">Account</a>    
+                        <a href="<?php echo site_url(); ?>/account" class="whitelink">Account</a>    
                         &nbsp;|&nbsp;
-                        <a href="portfolio" data-navigo class="whitelink portfoliolink" onclick="reloadPortfolio()">Portfolio</a>
+                        <a href="<?php echo($url_prefix); ?>/portfolio" class="whitelink link-portfolio">Portfolio</a>
                         &nbsp;|&nbsp;
-                        <a href="watchlist" data-navigo class="whitelink portfoliolink" onclick="reloadPortfolio()">Watchlist</a>                    
+                        <a href="<?php echo($url_prefix); ?>/watchlist" class="whitelink link-watchlist">Watchlist</a>                    
                     </div>
 
 				<?php } else { ?>
 
-                    <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;color:#bfbfbf;">
+                    <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;" class="text-footer-links">
                         <a href="<?php echo site_url(); ?>/account/#login" class="whitelink">Log in</a>
                         &nbsp;|&nbsp;
-                        <a href="manage-alerts" data-navigo class="whitelink">Alerts</a>
+                        <a href="<?php echo($url_prefix); ?>/manage-alerts" class="whitelink link-manage-alerts">Alerts</a>
                         &nbsp;|&nbsp;
-                        <a href="portfolio" data-navigo class="whitelink portfoliolink">Portfolio</a>
+                        <a href="<?php echo($url_prefix); ?>/portfolio" class="whitelink link-portfolio">Portfolio</a>
                         &nbsp;|&nbsp;
-                        <a href="watchlist" data-navigo class="whitelink portfoliolink">Watchlist</a>
+                        <a href="watchlist" class="whitelink link-watchlist">Watchlist</a>
                     </div>
 
 				<?php } ?>
 
-                <!-- <div style="height:20px;"></div>
+				<div style="margin-top:18px;font-size:10px;" class="text-footer-links">
 
-                <span style="color:white;">Just received a strange BTC alert? See <a href="https://twitter.com/Coinwink/status/1174162988791713793" target="_blank" style="color:white;font-weight:bold;">here</a> why.</span>
+					<a href="<?php echo($url_prefix); ?>/about" class="whitelink link-about">About</a>&nbsp;|&nbsp;
+					<a href="<?php echo($url_prefix); ?>/pricing" class="whitelink link-pricing">Pricing</a>&nbsp;|&nbsp;
+					<a href="<?php echo($url_prefix); ?>/terms" class="whitelink link-terms">Terms</a>&nbsp;|&nbsp;
+                    <a href="<?php echo($url_prefix); ?>/privacy" class="whitelink link-privacy">Privacy</a>&nbsp;|&nbsp;
+                    <a href="<?php echo($url_prefix); ?>/press" class="whitelink link-press">Press</a>&nbsp;|&nbsp;
+					<a href="https://coinwink.com/blog/" class="whitelink" target="_blank">Blog</a>&nbsp;|&nbsp;
+					<a href="<?php echo($url_prefix); ?>/contacts" class="whitelink link-contacts">Contacts</a>
 
-                <div style="height:3px;"></div> -->
+				</div>
 			
 			<?php } ?>
 
 
-			<?php if (is_page_template('template-account.php') || is_page_template('template-changepass.php') || is_page_template('template-portfolio.php') ) { ?>
+			<?php if (is_page_template('template-account.php') || is_page_template('template-changepass.php') || is_page_template('template-portfolio.php') || is_page_template('template-alert.php') ) { ?>
 
-                <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;color:#bfbfbf;">
+                <div style="margin:0 auto;padding-top:4px;padding-bottom:10px;" class="text-footer-links">
                     <a href="<?php echo site_url(); ?>" class="whitelink">Home</a>
                     &nbsp;|&nbsp;
-                    <a href="<?php echo site_url(); ?>/manage-alerts/" class="whitelink">Alerts</a>
+                    <a href="<?php echo site_url(); ?>/manage-alerts" class="whitelink">Alerts</a>
                     &nbsp;|&nbsp;
-                    <a href="<?php echo site_url(); ?>/portfolio/" class="whitelink">Portfolio</a>
+                    <a href="<?php echo site_url(); ?>/portfolio" class="whitelink">Portfolio</a>
                     &nbsp;|&nbsp;
-                    <a href="<?php echo site_url(); ?>/watchlist/" class="whitelink">Watchlist</a>
+                    <a href="<?php echo site_url(); ?>/watchlist" class="whitelink">Watchlist</a>
                 </div>
 
-				<div style="margin-top:20px;margin-bottom:40px;font-size:10px;color:#bfbfbf;">
+				<div style="margin-top:18px;font-size:10px;" class="text-footer-links">
 					
 					<a href="<?php echo site_url(); ?>/about" class="whitelink">About</a>&nbsp;|&nbsp;
 					<a href="<?php echo site_url(); ?>/pricing" class="whitelink">Pricing</a>&nbsp;|&nbsp;
 					<a href="<?php echo site_url(); ?>/terms" class="whitelink">Terms</a>&nbsp;|&nbsp;
                     <a href="<?php echo site_url(); ?>/privacy" class="whitelink">Privacy</a>&nbsp;|&nbsp;
                     <a href="<?php echo site_url(); ?>/press" class="whitelink">Press</a>&nbsp;|&nbsp;
+					<a href="https://coinwink.com/blog/" class="whitelink" target="_blank">Blog</a>&nbsp;|&nbsp;
 					<a href="<?php echo site_url(); ?>/contacts" class="whitelink">Contacts</a>
-					
-                    <div style="height:15px;"></div>
 
-                    <span style="line-height:150%;">
-                        <a href="https://coinwink.com" style="text-decoration:none!important;color:#bfbfbf!important;">Crypto Price Alerts, Watchlist and Portfolio Tracking App</a>
-                        <br>
-                        Privacy-Focused, Based on CoinMarketCap
-                        <br>
-                    </span>
-		
-				</div>
-
-			<?php } else { ?>
-
-					<div style="margin-top:20px;margin-bottom:40px;font-size:10px;color:#bfbfbf;">
-					<a href="about" data-navigo class="whitelink">About</a>&nbsp;|&nbsp;
-					<a href="pricing" data-navigo class="whitelink">Pricing</a>&nbsp;|&nbsp;
-					<a href="terms" data-navigo class="whitelink">Terms</a>&nbsp;|&nbsp;
-                    <a href="privacy" data-navigo class="whitelink">Privacy</a>&nbsp;|&nbsp;
-                    <a href="press" data-navigo class="whitelink">Press</a>&nbsp;|&nbsp;
-					<a href="contacts" data-navigo class="whitelink">Contacts</a>
-					
-                    <div style="height:15px;"></div>
-
-                    <span style="line-height:150%;">
-                        <a href="https://coinwink.com" style="text-decoration:none!important;color:#bfbfbf!important;">Crypto Price Alerts, Watchlist and Portfolio Tracking App</a>
-                        <br>
-                        Privacy-Focused, Based on CoinMarketCap
-                        <br>
-                    </span>
-		
 				</div>
 
 			<?php } ?>
+					
+				<div style="height:15px;"></div>
 
+				<span style="line-height:150%;font-size:10px;" class="text-footer">
+					<!-- Cryptocurrency Alerts, Watchlist & Portfolio Tracking App -->
+					<a href="https://coinwink.com" style="text-decoration:none!important;color:#bfbfbf!important;">Crypto Price Alerts, Watchlist and Portfolio Tracking App</a>
+					<br>
+					Privacy-Focused, Based on CoinMarketCap
+				</span>
+					
+				<div style="height:40px;"></div>
+
+			</div>
+			
 		</footer>
 
 	<?php return ob_get_clean(); 
 }
 add_shortcode( 'footer_shortcode', 'footer_shortcode_func' );
 
-
-//
-// Required by Captcha by BestWebSoft plugin
-//
-function add_my_forms( $forms ) {
-    $forms['form_slug']   = "Coinwink";
-    return $forms;
-}
-add_filter( 'cptch_add_form', 'add_my_forms' );
 
 
 
@@ -1692,6 +2179,8 @@ add_filter('show_admin_bar', 'remove_admin_bar'); // Remove Admin bar
 
 
 
+
+
 //
 // On theme's activation, create db tables, default pages and promote admin user to Premium plan
 // 
@@ -1701,7 +2190,8 @@ function create_db_tables_and_default_pages(){
 
     global $wpdb;
     $table_name = "cw_alerts_email_cur";
-    
+	
+	// If tables don't exist, then create
     if ($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {
 
         include ABSPATH . "auth_sql.php";
@@ -1770,7 +2260,52 @@ function create_db_tables_and_default_pages(){
     
             update_option( 'page_on_front', $page_id );
             update_option( 'show_on_front', 'page' );
+	
+			
+            $post_details = array(
+                'post_title'    => 'Portfolio',
+                'post_content'  => '',
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type' => 'page'
+            );
+            wp_insert_post( $post_details );
     
+            $page = get_page_by_title( 'Portfolio', OBJECT, 'page' );
+            $page_id = null == $page ? -1 : $page->ID;
+    
+			add_post_meta( $page_id, '_wp_page_template', 'template-home.php' );
+			
+
+			$post_details = array(
+                'post_title'    => 'Watchlist',
+                'post_content'  => '',
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type' => 'page'
+            );
+            wp_insert_post( $post_details );
+    
+            $page = get_page_by_title( 'Watchlist', OBJECT, 'page' );
+            $page_id = null == $page ? -1 : $page->ID;
+    
+			add_post_meta( $page_id, '_wp_page_template', 'template-home.php' );
+
+			
+			$post_details = array(
+                'post_title'    => 'Alert',
+                'post_content'  => '',
+                'post_status'   => 'publish',
+                'post_author'   => 1,
+                'post_type' => 'page'
+            );
+            wp_insert_post( $post_details );
+    
+            $page = get_page_by_title( 'Alert', OBJECT, 'page' );
+            $page_id = null == $page ? -1 : $page->ID;
+    
+            add_post_meta( $page_id, '_wp_page_template', 'template-alert.php' );
+
     
             $post_details = array(
                 'post_title'    => 'Account',
@@ -1830,7 +2365,6 @@ function create_db_tables_and_default_pages(){
         );
 
         // Add CMC demo data
-        // include "cmc_demo_data.php";
         $string_data = file_get_contents(get_template_directory_uri().'/cmc_demo_data.txt');
 
         $wpdb->update( 'cw_data_cmc', 
@@ -1842,6 +2376,3 @@ function create_db_tables_and_default_pages(){
     }
 
 }
-
-
-?>

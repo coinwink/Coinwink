@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 66.84 66.84">
+    <style type="text/css" >
+        <![CDATA[
+            .spinner-dot {
+                animation: spinner 0.8s linear infinite;
+            }
+
+            #spinner-01 { animation-delay: -0.2s; }
+            #spinner-02 { animation-delay: -0.1s; }
+            #spinner-03 { animation-delay: 0.0s; }
+            #spinner-04 { animation-delay: 0.1s; }
+            #spinner-05 { animation-delay: 0.2s; }
+            #spinner-06 { animation-delay: 0.3s; }
+            #spinner-07 { animation-delay: 0.4s; }
+            #spinner-08 { animation-delay: 0.5s; }
+
+            @keyframes spinner {
+                0% {
+                    fill: #545454;
+                }
+                100% {
+                    fill: #cecece0d;
+                }
+            }
+        ]]>
+    </style>
+    <path d="M33.42,0a7.54,7.54,0,1,1-7.54,7.54A7.54,7.54,0,0,1,33.42,0Z" class="spinner-dot" id="spinner-01"  />
+    <path d="M57.05,9.79a7.54,7.54,0,1,1-10.66,0,7.53,7.53,0,0,1,10.66,0Z" class="spinner-dot" id="spinner-02" />
+    <path d="M66.84,33.42a7.54,7.54,0,1,1-7.54-7.54,7.53,7.53,0,0,1,7.54,7.54Z" class="spinner-dot" id="spinner-03" />
+    <path d="M57.05,57.05a7.54,7.54,0,1,1,0-10.66,7.53,7.53,0,0,1,0,10.66Z" class="spinner-dot" id="spinner-04" />
+    <path d="M33.42,66.84A7.54,7.54,0,1,1,41,59.3a7.54,7.54,0,0,1-7.54,7.54Z" class="spinner-dot" id="spinner-05" />
+    <path d="M9.79,57.05a7.54,7.54,0,1,1,10.66,0,7.53,7.53,0,0,1-10.66,0Z" class="spinner-dot"  id="spinner-06" />
+    <path d="M0,33.42A7.54,7.54,0,1,1,7.54,41,7.55,7.55,0,0,1,0,33.42Z" class="spinner-dot" id="spinner-07" />
+    <path d="M9.79,9.79a7.54,7.54,0,1,1,0,10.66,7.53,7.53,0,0,1,0-10.66Z" class="spinner-dot" id="spinner-08" />
+</svg>
