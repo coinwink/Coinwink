@@ -57,7 +57,7 @@ To receive SMS alerts, sign up on [Twilio](https://www.twilio.com/referral/UOxUV
 
 For currency rates conversion, two services are utilized. More info: `cron_data_cur_rates.php`.
 
-`/img/coins` folder is for cryptocurrency logos. Our script to update/fetch new logos can be found [here](https://github.com/giekaton/cryptocurrency-logos).
+`/img/coins` folder is for cryptocurrency logos. Our script to update/fetch new logos can be found [here](https://github.com/coinwink/cryptocurrency-logos).
 
 <br>
 
