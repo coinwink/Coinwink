@@ -2,13 +2,13 @@
 
 #### Crypto Alerts, Watchlist and Portfolio Tracking App ####
 
-[Coinwink](https://coinwink.com) was first built as a Wordpress web-app in 2016, and even now (2020) it continues to run on the same stack.
+[Coinwink](https://coinwink.com) was first built as a WordPress web-app in 2016, and even now it continues to run on the same stack.
 
-While it is tempting to switch to Laravel + Vue, the current Wordpress + jQuery stack runs great. It is fast, simple and secure, easy to maintain and update.
+While it is tempting to switch to Laravel + Vue, the current WP + jQuery stack runs great. It is fast, secure, relatively easy to maintain and update.
 
-Only the user accounts (more than 30k) are on Wordpress, and the app uses WP MySQL queries. The backend scripts, responsible for alerts delivery, are independent PHP files.
+Only user accounts are on WP, and also the app uses WP MySQL queries. The backend scripts, responsible for alerts delivery, are independent PHP files.
 
-The front-end is a custom-made web-app layout, based on jQuery.
+The front-end is a custom-made web-app interface, based on jQuery.
 
 This repository includes all of the latest Coinwink app's source code, including the Matrix theme. The payments module and the captcha plugin are not part of this repository because they are not required for individual Coinwink use.
 
