@@ -10,10 +10,6 @@ Only the user accounts (more than 30k) are on Wordpress, and the app uses WP MyS
 
 The front-end is a custom-made web-app layout, based on jQuery.
 
-Right now the whole app code is very monolithic. In the future, the idea is to make the code more modular, and maybe start using Wordpress plugins/templates system for optional and/or community developed features and themes.
-
-There is also an idea to make Coinwink front-end without jQuery. The modern JavaScript is already great and getting better with each year, so in the future Coinwink's frontend can run on vanilla JS.
-
 This repository includes all of the latest Coinwink app's source code, including the Matrix theme. The payments module and the captcha plugin are not part of this repository because they are not required for individual Coinwink use.
 
 <br>
