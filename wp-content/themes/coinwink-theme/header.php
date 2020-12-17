@@ -636,12 +636,12 @@
 
     <!-- GLOBAL JS -->
     <script>
-        // coinwinkEnv = 'dev';
-        coinwinkEnv = 'live';
+        coinwinkEnv = 'dev';
+        // coinwinkEnv = 'live';
 
         // Navigo js router
         if (coinwinkEnv == 'dev') {
-            homePath = "http://localhost/coinwink/";
+            homePath = "http://localhost/Coinwink/";
         }
         else {
             homePath = "https://coinwink.com/";
