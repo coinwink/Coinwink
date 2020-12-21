@@ -18,8 +18,8 @@ This repository includes all of the latest Coinwink app's source code, including
 
 - Make a fresh Wordpress install.
 - Copy all files from this repository to your Wordpress installation folder.
-- Copy [cryptocurrency-logos](https://github.com/coinwink/cryptocurrency-logos.git) repository to your `/img/coins` folder.
-- Update the theme's `header.php` file: set the `homePath` variable to your Wordpress location.
+- Copy contents from [cryptocurrency-logos](https://github.com/coinwink/cryptocurrency-logos.git) repository to your `img` folder.
+- Set the `homePath` variable to your Wordpress location in the theme's `header.php` file.
 - Update `auth_sql.php` file with your database login details.
 - First of all, in Wordpress "Settings->General" check "Anyone can register".
 - Only then activate Coinwink login plugin.
