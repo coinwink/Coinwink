@@ -1,9 +1,14 @@
 <?php
 
-
 // PHPMailer configuration
-require_once 'wp-includes/class-phpmailer.php';
-require_once 'wp-includes/class-smtp.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
+require 'lib/PHPMailer/src/Exception.php';
+require 'lib/PHPMailer/src/PHPMailer.php';
+require 'lib/PHPMailer/src/SMTP.php';
+
+
 $mail = new PHPMailer;
 //Tell PHPMailer to use SMTP
 $mail->isSMTP();
