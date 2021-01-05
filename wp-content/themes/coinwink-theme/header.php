@@ -656,7 +656,7 @@
     <?php if ( is_user_logged_in() ) { ?>
 
         <script>
-            var t_s = <?php echo($t_s) ?>;
+            var t_s = '<?php echo($t_s) ?>';
             var t_i = '<?php echo($t_i) ?>';
 
             if (t_i == '') {
