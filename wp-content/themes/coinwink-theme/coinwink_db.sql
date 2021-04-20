@@ -287,9 +287,9 @@ CREATE TABLE IF NOT EXISTS `cw_logs_alerts_sms` (
 
 DROP TABLE IF EXISTS `cw_settings`;
 CREATE TABLE IF NOT EXISTS `cw_settings` (
-  `user_ID` smallint(10) NOT NULL AUTO_INCREMENT,
+  `user_ID` int(11) NOT NULL,
   `subs` tinyint(4) NOT NULL DEFAULT 0,
-  `sms` tinyint(4) NOT NULL DEFAULT 0,
+  `sms` smallint(6) NOT NULL DEFAULT 0,
   `legac` tinyint(4) NOT NULL DEFAULT 0,
   `theme` varchar(32) NOT NULL,
   `t_s` tinyint(1) NOT NULL,
