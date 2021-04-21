@@ -19,7 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET') {
 	// Get coin price data from the database
 	$resultdb2 = $wpdb->get_results( "SELECT json FROM cw_data_cmc" , ARRAY_A);
 	$newarrayjson = $resultdb2[0]['json'];
-	$newarrayunserialized = unserialize($newarrayjson);
+	// $newarrayunserialized = unserialize($newarrayjson);
+	$newarrayunserialized = json_decode($newarrayjson, TRUE);
 
 	// (Re-use same cmc data on front-end)
 	add_filter( 'cmc_data_backend', 'return_cmc_data_backend' );

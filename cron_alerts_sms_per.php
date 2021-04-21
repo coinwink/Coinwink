@@ -136,7 +136,8 @@ $sql = "SELECT json FROM cw_data_cmc WHERE ID = 1";
 $result = $conn->query($sql);
 foreach($result as $row)
 {
-    $dataCMC = unserialize($row["json"]);
+    // $dataCMC = unserialize($row["json"]);
+    $dataCMC = json_decode($row["json"], TRUE);
 }
 unset($result);
 

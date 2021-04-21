@@ -118,7 +118,8 @@ else {
     $dataArray = unsetSomeProperties($dataArray, $BTC, $ETH);
 
     // Serialize and update db
-    $outputserialized = serialize($dataArray);
+    // $outputserialized = serialize($dataArray);
+    $outputserialized = json_encode($dataArray);
     $sqljson = "UPDATE cw_data_cmc SET json = '$outputserialized' WHERE ID = 1";
     $conn->query($sqljson);
 }
