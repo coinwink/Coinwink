@@ -191,6 +191,14 @@ CREATE TABLE IF NOT EXISTS `cw_data_cur_rates` (
   UNIQUE KEY `ID` (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
+--
+-- Dumping data for table `cw_data_cur_rates`
+--
+
+INSERT INTO `cw_data_cur_rates` (`ID`, `EUR`, `GBP`, `CAD`, `AUD`, `BRL`, `MXN`, `JPY`, `SGD`) VALUES
+(1, '0.822149', '0.715052', '1.21353', '1.274884', '5.235335', '19.90935', '108.592504', '1.324575');
+COMMIT;
+
 -- --------------------------------------------------------
 
 --
