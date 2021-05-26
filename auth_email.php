@@ -4,9 +4,15 @@
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-require 'lib/PHPMailer/src/Exception.php';
-require 'lib/PHPMailer/src/PHPMailer.php';
-require 'lib/PHPMailer/src/SMTP.php';
+// // For WP versions up to 4.6
+// require 'lib/PHPMailer/src/Exception.php';
+// require 'lib/PHPMailer/src/PHPMailer.php';
+// require 'lib/PHPMailer/src/SMTP.php';
+
+// For newer WP versions
+require 'wp-includes/PHPMailer/Exception.php';
+require 'wp-includes/PHPMailer/PHPMailer.php';
+require 'wp-includes/PHPMailer/SMTP.php';
 
 
 $mail = new PHPMailer;
