@@ -55,7 +55,9 @@
     rates['sgd'] = "<?php echo($result[0]['SGD']); ?>";
 </script>
 
-<?php
+<?php    
+    $theme = "";
+    
 	if ( is_user_logged_in() ) {
         $user_ID = get_current_user_id();
         

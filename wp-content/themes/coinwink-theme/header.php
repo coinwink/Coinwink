@@ -29,6 +29,10 @@
     <link href="<?php echo get_stylesheet_directory_uri(); ?>/style-select2.css?v=601" rel="stylesheet" />
     
     <?php
+        $theme = "";
+        $type = "";
+        $cw_description = "";
+
         if ( is_user_logged_in() ) {
             $user_ID = get_current_user_id();
             $result = $wpdb->get_results( "SELECT theme, t_s, t_i, cur_main, cur_p, cur_w, conf_w FROM cw_settings WHERE user_ID = '".$user_ID."'", ARRAY_A);

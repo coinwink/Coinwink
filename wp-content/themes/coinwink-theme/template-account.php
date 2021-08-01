@@ -5,6 +5,8 @@
 <?php $ajax_nonce = wp_create_nonce( "my-special-string" ); ?>
 
 <?php
+	$theme = "";
+	
 	if ( is_user_logged_in() ) {
 		$user_ID = get_current_user_id();
 		$result = $wpdb->get_results( "SELECT subs, sms, theme FROM cw_settings WHERE user_ID = '".$user_ID."'", ARRAY_A);
