@@ -1,26 +1,26 @@
 <?php
 
 
-// Send mail through SMTP
-function wpse8170_phpmailer_init( PHPMailer $phpmailer ) {
-    $phpmailer->Host = '';
-    $phpmailer->Port = 465; // could be different
-    $phpmailer->Username = ''; // if required
-    $phpmailer->Password = ''; // if required
-    $phpmailer->SMTPAuth = true; // if required
-    $phpmailer->SMTPSecure = 'ssl'; // enable if required, 'tls' is another possible value
-    $phpmailer->IsSMTP();
+// SMTP server config
+add_action( 'phpmailer_init', 'set_phpmailer_details' );
+function set_phpmailer_details( $phpmailer ) {
+    $phpmailer->isSMTP();     
+    $phpmailer->Host = 'YOUR_SMTP HOST';
+    $phpmailer->SMTPAuth = true;
+    $phpmailer->Port = 'SMTP_PORT'; // 25 or 465
+    $phpmailer->Username = 'SMTP_USERNAME';
+    $phpmailer->Password = 'SMTP_PASSWORD';
+    $phpmailer->SMTPSecure = 'ssl'; // ssl or tls
 }
-add_action( 'phpmailer_init', 'wpse8170_phpmailer_init' );
 
 
-// Automatic wp email config
+// WP email config
 function website_email() {
-    $sender_email= '';
+    $sender_email= 'YOUR_EMAIL_ADDRESS';
     return $sender_email;
 }
 function website_name(){
-    $site_name = '';
+    $site_name = 'YOUR_WEBSITE_NAME';
     return $site_name;
 }
 add_filter('wp_mail_from','website_email');
