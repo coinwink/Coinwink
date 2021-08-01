@@ -641,7 +641,7 @@
 
         // Navigo js router
         if (coinwinkEnv == 'dev') {
-            homePath = "http://localhost/Coinwink/";
+            homePath = "http://localhost/coinwink/";
         }
         else {
             homePath = "https://coinwink.com/";
