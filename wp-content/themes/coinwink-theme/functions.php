@@ -1626,7 +1626,7 @@ function delete_alert_acc_email(){
         $user_ID = get_current_user_id();
 
         if ($alert_user_ID == $user_ID) {
-            $wpdb->delete( cw_alerts_email_cur,  array( 'ID' => $alert_id ) );
+            $wpdb->delete( 'cw_alerts_email_cur',  array( 'ID' => $alert_id ) );
         }
         else {
             echo('Huh?');
@@ -1659,7 +1659,7 @@ function delete_alert_percent_acc(){
         $user_ID = get_current_user_id();
 
         if ($alert_user_ID == $user_ID) {
-            $wpdb->delete( cw_alerts_email_per,  array( 'ID' => $alert_id ) );
+            $wpdb->delete( 'cw_alerts_email_per',  array( 'ID' => $alert_id ) );
         }
         else {
             echo('Huh?');
@@ -1691,7 +1691,7 @@ function delete_alert_acc_sms(){
         $user_ID = get_current_user_id();
 
         if ($alert_user_ID == $user_ID) {
-            $wpdb->delete( cw_alerts_sms_cur,  array( 'ID' => $alert_id ) );
+            $wpdb->delete( 'cw_alerts_sms_cur',  array( 'ID' => $alert_id ) );
         }
         else {
             echo('Huh?');
@@ -1723,7 +1723,7 @@ function delete_alert_acc_sms_per(){
         $user_ID = get_current_user_id();
 
         if ($alert_user_ID == $user_ID) {
-            $wpdb->delete( cw_alerts_sms_per,  array( 'ID' => $alert_id ) );
+            $wpdb->delete( 'cw_alerts_sms_per',  array( 'ID' => $alert_id ) );
         }
         else {
             echo('Huh?');
