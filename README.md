@@ -1,5 +1,7 @@
 <img src="https://coinwink.com/img/coinwink-logo-horizontal-git.png" width="160">
 
+*NOTICE: Coinwink is now running on Laravel. This repository will be updated to reflect the framework changes.*
+
 #### Crypto Alerts, Watchlist and Portfolio Tracking App ####
 
 [Coinwink](https://coinwink.com) was first built as a WordPress web-app in 2016, and even now it continues to run on the same stack.
