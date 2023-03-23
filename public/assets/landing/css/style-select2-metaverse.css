@@ -1,0 +1,92 @@
+
+.select2-dropdown {
+    background-color: black!important;
+}
+
+
+.select2-container .select2-selection--single, 
+.select2-container .select2-selection--single,
+.select2-container--default .select2-selection--single,
+.select2-container--default .select2-selection--single .select2-selection__rendered,
+.select2-search__field {
+    /* border-color: #123f8a!important; */
+    border-color:#6b4cdb!important;
+    color: #a6f6f4!important;
+    background: transparent!important;
+    font-size: 14px;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow b {
+    border-color: #6b4cdb transparent transparent transparent;
+}
+
+
+.select2-search--dropdown {
+    background-color: black;
+    color: white;
+}
+
+.select2-container--default .select2-results>.select2-results__options {
+    background-color: black;
+    /* color: white; */
+}
+
+.select2-container--default .select2-results__option[aria-selected=true] {
+    /* background-color: rgb(0, 96, 74); */
+    background-color: #00323f;
+}
+
+.select2-container--open .select2-dropdown--below {
+    /* border:0px; */
+    background-color: black;
+}
+
+.select2-dropdown .select2-dropdown--above {
+    background-color: black;
+}
+
+.select2-dropdown {
+    /* border:0px; */
+    border: 1px solid #6b4cdb;
+}
+
+.select2-results__options::-webkit-scrollbar {
+  width: 15px;
+  background-clip: padding-box;
+}
+
+.select2-results__options::-webkit-scrollbar-track {
+  background-color: #111;
+  /* height: 8px; */
+  background-clip: padding-box;
+}
+
+.select2-results__options::-webkit-scrollbar-thumb {
+  background-clip: padding-box;
+  background-color: #333;
+}
+
+.select2-results__options::-webkit-scrollbar-button {
+    display: none;
+}
+
+.select2-container--default .select2-results__option--highlighted[aria-selected] {
+    background-color: #00889e;
+}
+
+.select2-results {
+    background-color: black;
+    font-size: 14px;
+}
+
+@media only screen and (min-width: 801px) {
+    .select2-results__options::-webkit-scrollbar-thumb:hover {
+        background-color: #555;
+    }
+}
+
+
+.select2-results__options::-webkit-scrollbar-thumb:active {
+    background-color: #555;
+}
+

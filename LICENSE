@@ -1,9 +1,28 @@
 COINWINK LICENSE
 
-Coinwink's source code available in this repository is for personal use, also for review, 
-educational, and in general - for non-commercial purposes.
+Copyright (c) 2016-2023 Coinwink
 
-Intellectual property assets are protected by law.
+The Coinwink source code, which is available in this repository, can be used for 
+non-commercial purposes as outlined in this license. Such non-commercial uses 
+include personal use, source code review, transparency, educational purposes, and 
+other similar endeavors.
 
-For your personal needs, you are allowed to run Coinwink app in your own development 
-environment and to use it as much as you need, without any limits.
+You are allowed to use Coinwink app for personal, non-commercial purposes within 
+your own development environment.
+
+Using Coinwink code or media assets for commercial purposes, such as in a 
+commercial product or service, is strictly prohibited. The intellectual property 
+assets of Coinwink are legally protected.
+
+This software includes third party code that is subject to separate license terms. 
+Any use of such third party code is governed by the applicable license terms 
+identified in the third party code. You are responsible for complying with all 
+applicable license terms when using such third party code. Please refer to the 
+documentation or other materials provided with the software for more information 
+on the third party code and the applicable license terms.
+
+The software is provided to you as is and the creators cannot be held responsible 
+for any problems or losses that may occur from using it. They also cannot guarantee 
+that the software will work properly or be free from errors. Additionally, the 
+creators will not be held liable for any damages that may result from using the 
+software. It is the user's responsibility to use it wisely and at their own risk.
