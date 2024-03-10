@@ -17,7 +17,7 @@ The new Coinwink V2 includes some code from the V1 that was retained for its opt
 - For local environment, set up a virtual host with its path pointing to Laravel's `public` folder. Then update the virtual host URL in the `webpack.mix` file as the proxy value.
 - Copy contents from the <a href="https://github.com/coinwink/cryptocurrency-logos" target="_blank">cryptocurrency-logos</a> repository to `/public/img` folder to have the following structure `/public/img/coins`.
 - For hot reload, run the `npm run watch` command.
-- For a production build, run the `npm run build` command.
+- For a production build, run the `npm run prod` command.
 
 #### More info ####
 
